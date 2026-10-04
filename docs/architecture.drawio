@@ -1,0 +1,116 @@
+<?xml version='1.0' encoding='utf-8'?>
+<mxfile host="app.diagrams.net">
+  <diagram id="arch1" name="Architecture">
+    <mxGraphModel dx="1400" dy="960" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="920" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="n2" value="&lt;b&gt;Portfolio Tracker: React + FastAPI architecture&lt;/b&gt;&lt;br&gt;Stateless backend. Browser sends transactions with each request; nothing is stored on the server." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#111111;fontSize=14;" parent="1" vertex="1">
+          <mxGeometry x="20" y="10" width="1260" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="z1" value="&lt;b&gt;BROWSER (React + Vite + TypeScript)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#EAF1FF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="20" y="90" width="380" height="722" as="geometry" />
+        </mxCell>
+        <mxCell id="z2" value="&lt;b&gt;BACKEND (Python + FastAPI)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#E8F6EA;strokeColor=#2E7D32;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="500" y="90" width="420" height="722" as="geometry" />
+        </mxCell>
+        <mxCell id="z3" value="&lt;b&gt;EXTERNAL&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFF6E0;strokeColor=#B8860B;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1020" y="90" width="260" height="200" as="geometry" />
+        </mxCell>
+        <mxCell id="z4" value="&lt;b&gt;HOSTING (Cloudflare Pages + Render)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#F1EAFB;strokeColor=#5E35B1;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1020" y="330" width="260" height="482" as="geometry" />
+        </mxCell>
+        <mxCell id="n3" value="&lt;b&gt;App shell: 4 tabs&lt;/b&gt;&lt;br&gt;Input Transactions&lt;br&gt;Current Portfolio&lt;br&gt;Historical Performance&lt;br&gt;Architecture (this explainer)" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="130" width="340" height="112" as="geometry" />
+        </mxCell>
+        <mxCell id="n4" value="&lt;b&gt;Input forms&lt;/b&gt;&lt;br&gt;☑ Use the sample portfolio (default)&lt;br&gt;CSV upload (drag and drop)&lt;br&gt;Manual entry form · Download sample CSV" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="262" width="340" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="n5" value="&lt;b&gt;Browser state&lt;/b&gt;&lt;br&gt;Held in React state only · cleared on refresh&lt;br&gt;No account, no database, nothing saved" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="390" width="340" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="n6" value="&lt;b&gt;API client&lt;/b&gt;&lt;br&gt;fetch + JSON · base URL from VITE_API_URL&lt;br&gt;Retries while a sleeping server wakes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="499" width="340" height="85" as="geometry" />
+        </mxCell>
+        <mxCell id="n7" value="&lt;b&gt;Views (Recharts)&lt;/b&gt;&lt;br&gt;Allocation donut · value trend line&lt;br&gt;Holdings table · metric cards&lt;br&gt;Loading, empty and error states&lt;br&gt;'Waking the server' screen · snapshot-prices banner" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="608" width="340" height="122" as="geometry" />
+        </mxCell>
+        <mxCell id="n8" value="&lt;b&gt;FastAPI app&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· app/main.py, limits.py&lt;/font&gt;&lt;br&gt;CORS allow-list · request validation · JSON errors&lt;br&gt;Limits: 2 MB · 5,000 rows · 25 tickers&lt;br&gt;Per-IP rate limit · timeouts · no body logging" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="130" width="380" height="104" as="geometry" />
+        </mxCell>
+        <mxCell id="n9" value="&lt;b&gt;Endpoints&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· app/routes/&lt;/font&gt;&lt;br&gt;GET /health&lt;br&gt;POST /api/transactions/validate&lt;br&gt;POST /api/portfolio&lt;br&gt;POST /api/performance" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="250" width="380" height="125" as="geometry" />
+        </mxCell>
+        <mxCell id="n10" value="&lt;b&gt;Validation&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· core/transactions.py&lt;/font&gt;&lt;br&gt;Parse CSV · normalize · reject bad rows · oversell check" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="392" width="380" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="n11" value="&lt;b&gt;Accounting &amp;amp; XIRR&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· core/accounting.py, xirr.py&lt;/font&gt;&lt;br&gt;Holdings (avg cost) · totals · total return · XIRR" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="474" width="380" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="n12" value="&lt;b&gt;Value history&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· core/history.py&lt;/font&gt;&lt;br&gt;Portfolio value and net invested over time" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="556" width="380" height="62" as="geometry" />
+        </mxCell>
+        <mxCell id="n13a" value="&lt;b&gt;Price cache&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· pricing/cache.py&lt;/font&gt;&lt;br&gt;Per-ticker TTL · shared fetches · bad-ticker memory" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="634" width="380" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="n13" value="&lt;b&gt;Prices + snapshot fallback&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· pricing/service.py&lt;/font&gt;&lt;br&gt;Live: yfinance, else price_snapshot.json&lt;br&gt;labelled &quot;Prices as of &amp;lt;date&amp;gt;&quot; · test fakes offline" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#2E7D32;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="716" width="380" height="84" as="geometry" />
+        </mxCell>
+        <mxCell id="n14" value="&lt;b&gt;Yahoo Finance via yfinance&lt;/b&gt;&lt;br&gt;Unofficial. Unadjusted daily closes.&lt;br&gt;May be delayed, rate limited, or blocked." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#B8860B;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="130" width="220" height="140" as="geometry" />
+        </mxCell>
+        <mxCell id="n15" value="&lt;b&gt;Frontend&lt;/b&gt;&lt;br&gt;Cloudflare Pages (free)&lt;br&gt;Static React build&lt;br&gt;*.pages.dev public URL" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="390" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n16" value="&lt;b&gt;Backend&lt;/b&gt;&lt;br&gt;Render free web service&lt;br&gt;FastAPI, one worker, 512 MB&lt;br&gt;Sleeps after 15 min idle,&lt;br&gt;about 1 min to wake" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="520" width="220" height="118" as="geometry" />
+        </mxCell>
+        <mxCell id="n17" value="&lt;b&gt;Wiring&lt;/b&gt;&lt;br&gt;Frontend reads VITE_API_URL.&lt;br&gt;Backend CORS allows the&lt;br&gt;frontend origin only." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="662" width="220" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="n18" value="rows / file" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n4" target="n5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n19" value="transactions" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n5" target="n6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n20" value="results" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n6" target="n7">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n21" value="HTTPS + JSON: transactions in, results out" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#3D5AFE;strokeWidth=2;endArrow=block;startArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n6" target="n9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n22" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n8" target="n9">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n23" value="validate" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n9" target="n10">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n24" value="clean rows" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n10" target="n11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n25" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n11" target="n12">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n25b" value="needs prices" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n12" target="n13a">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n25c" value="miss" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n13a" target="n13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n26" value="daily closes" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B8860B;strokeWidth=2;endArrow=block;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n13" target="n11">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n28" value="live fetch (yfinance)" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B8860B;strokeWidth=2;endArrow=block;dashed=1;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n13" target="n14">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n29" value="calls API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5E35B1;strokeWidth=2;endArrow=block;dashed=1;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n15" target="n16">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="Request flow: 1) pick the sample, upload a CSV or add a row  2) POST /validate; clean rows kept in React state  3) tabs POST them to /portfolio and /performance  4) backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend  5) JSON back; React renders donut, tables, metrics and chart." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="20" y="830" width="1260" height="72" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

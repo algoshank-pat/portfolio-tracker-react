@@ -1,0 +1,171 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 920" width="1300" height="920" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<title>Portfolio Tracker: React + FastAPI architecture</title>
+<desc>Browser (React) sends transactions over HTTPS and JSON to a stateless FastAPI backend, which validates them, computes holdings, totals, XIRR and value history, and gets prices from a cache, then Yahoo Finance, then a stored snapshot. Frontend on Cloudflare Pages, backend on Render.</desc>
+<defs>
+<filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1B1B1F" flood-opacity="0.10"/></filter>
+<marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#444"/></marker>
+<marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker>
+<marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5E35B1"/></marker>
+<marker id="ahu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3D5AFE"/></marker>
+</defs>
+<rect width="1300" height="920" fill="#FBFAF7"/>
+<text x="30" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#1B1B1F">Portfolio Tracker: React + FastAPI architecture</text>
+<text x="30" y="66" font-size="13" fill="#5F6368">React frontend, stateless FastAPI backend, prices from Yahoo Finance. The browser sends its transactions with each request; the server stores nothing.</text>
+
+<!-- Zones -->
+<rect x="20" y="90" width="380" height="722" rx="16" fill="#EEF3FF" stroke="#3D5AFE" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="38" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#3D5AFE">BROWSER  ·  REACT + VITE + TYPESCRIPT</text>
+<rect x="500" y="90" width="420" height="722" rx="16" fill="#EAF6EE" stroke="#2E7D32" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="518" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#2E7D32">BACKEND  ·  PYTHON + FASTAPI</text>
+<rect x="1020" y="90" width="260" height="200" rx="16" fill="#FFF5DD" stroke="#B8860B" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="1038" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#B8860B">EXTERNAL</text>
+<rect x="1020" y="330" width="260" height="482" rx="16" fill="#F2ECFC" stroke="#5E35B1" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="1038" y="356" font-size="11" font-weight="700" letter-spacing="1.2" fill="#5E35B1">HOSTING  ·</text>
+<text x="1038" y="372" font-size="11" font-weight="700" letter-spacing="1.2" fill="#5E35B1">CLOUDFLARE PAGES + RENDER</text>
+
+<!-- Browser -->
+<g filter="url(#sh)"><rect x="40" y="130" width="340" height="112" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="138" width="4" height="96" rx="2" fill="#3D5AFE"/></g>
+<text x="58" y="154" font-size="13.5" font-weight="700" fill="#1B1B1F">App shell: four tabs</text>
+<text x="58" y="173" font-size="12" fill="#5F6368">Input Transactions</text>
+<text x="58" y="192" font-size="12" fill="#5F6368">Current Portfolio</text>
+<text x="58" y="211" font-size="12" fill="#5F6368">Historical Performance</text>
+<text x="58" y="230" font-size="12" fill="#5F6368">Architecture (this explainer)</text>
+
+<g filter="url(#sh)"><rect x="40" y="262" width="340" height="104" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="270" width="4" height="88" rx="2" fill="#3D5AFE"/></g>
+<text x="58" y="286" font-size="13.5" font-weight="700" fill="#1B1B1F">Input forms</text>
+<text x="58" y="305" font-size="12" fill="#5F6368">☑ Use the sample portfolio (default)</text>
+<text x="58" y="324" font-size="12" fill="#5F6368">CSV upload (drag and drop)</text>
+<text x="58" y="343" font-size="12" fill="#5F6368">Manual entry form · Download sample CSV</text>
+
+<g filter="url(#sh)"><rect x="40" y="390" width="340" height="85" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="398" width="4" height="69" rx="2" fill="#3D5AFE"/></g>
+<text x="58" y="414" font-size="13.5" font-weight="700" fill="#1B1B1F">Browser state</text>
+<text x="58" y="433" font-size="12" fill="#5F6368">Held in React state only · cleared on refresh</text>
+<text x="58" y="452" font-size="12" fill="#5F6368">No account, no database, nothing saved</text>
+
+<g filter="url(#sh)"><rect x="40" y="499" width="340" height="85" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="507" width="4" height="69" rx="2" fill="#3D5AFE"/></g>
+<text x="58" y="523" font-size="13.5" font-weight="700" fill="#1B1B1F">API client</text>
+<text x="58" y="542" font-size="12" fill="#5F6368">fetch + JSON · base URL from VITE_API_URL</text>
+<text x="58" y="561" font-size="12" fill="#5F6368">Retries while a sleeping server wakes</text>
+
+<g filter="url(#sh)"><rect x="40" y="608" width="340" height="122" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="616" width="4" height="106" rx="2" fill="#3D5AFE"/></g>
+<text x="58" y="632" font-size="13.5" font-weight="700" fill="#1B1B1F">Views (Recharts)</text>
+<text x="58" y="651" font-size="12" fill="#5F6368">Allocation donut · value trend line</text>
+<text x="58" y="670" font-size="12" fill="#5F6368">Holdings table · metric cards</text>
+<text x="58" y="689" font-size="12" fill="#5F6368">Loading, empty and error states</text>
+<text x="58" y="708" font-size="12" fill="#5F6368">'Waking the server' screen · snapshot-prices banner</text>
+
+<path d="M210,366 V390" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M210,475 V499" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M210,584 V608" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<rect x="248.9" y="367" width="82.2" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="290" y="381" font-size="11" text-anchor="middle" fill="#444">rows / file</text>
+<rect x="245.8" y="476" width="88.4" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="290" y="490" font-size="11" text-anchor="middle" fill="#444">transactions</text>
+<rect x="261.3" y="585" width="57.4" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="290" y="599" font-size="11" text-anchor="middle" fill="#444">results</text>
+
+<!-- Browser <-> backend -->
+<path d="M380,541 H450 V312 H520" fill="none" stroke="#3D5AFE" stroke-width="2" stroke-linejoin="round" marker-end="url(#ahu)" marker-start="url(#ahu)"/>
+<rect x="402" y="400" width="96" height="54" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="450" y="414" font-size="11" text-anchor="middle" fill="#3D5AFE">HTTPS + JSON</text>
+<text x="450" y="430" font-size="11" text-anchor="middle" fill="#3D5AFE">transactions in,</text>
+<text x="450" y="446" font-size="11" text-anchor="middle" fill="#3D5AFE">results out</text>
+
+<!-- Backend -->
+<g filter="url(#sh)"><rect x="520" y="130" width="380" height="104" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="138" width="4" height="88" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="154" font-size="13.5" font-weight="700" fill="#1B1B1F">FastAPI app <tspan font-size="11" font-weight="400" fill="#80868B">· app/main.py, limits.py</tspan></text>
+<text x="538" y="173" font-size="12" fill="#5F6368">CORS allow-list · request validation · JSON errors</text>
+<text x="538" y="192" font-size="12" fill="#5F6368">Limits: 2 MB · 5,000 rows · 25 tickers</text>
+<text x="538" y="211" font-size="12" fill="#5F6368">Per-IP rate limit · timeouts · no body logging</text>
+
+<g filter="url(#sh)"><rect x="520" y="250" width="380" height="125" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="258" width="4" height="109" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="274" font-size="13.5" font-weight="700" fill="#1B1B1F">Endpoints <tspan font-size="11" font-weight="400" fill="#80868B">· app/routes/</tspan></text>
+<text x="538" y="293" font-size="12" fill="#5F6368">GET  /health</text>
+<text x="538" y="312" font-size="12" fill="#5F6368">POST /api/transactions/validate</text>
+<text x="538" y="331" font-size="12" fill="#5F6368">POST /api/portfolio</text>
+<text x="538" y="350" font-size="12" fill="#5F6368">POST /api/performance</text>
+
+<g filter="url(#sh)"><rect x="520" y="392" width="380" height="66" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="400" width="4" height="50" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="416" font-size="13.5" font-weight="700" fill="#1B1B1F">Validation <tspan font-size="11" font-weight="400" fill="#80868B">· core/transactions.py</tspan></text>
+<text x="538" y="435" font-size="12" fill="#5F6368">Parse CSV · normalize · reject bad rows · oversell check</text>
+
+<g filter="url(#sh)"><rect x="520" y="474" width="380" height="66" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="482" width="4" height="50" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="498" font-size="13.5" font-weight="700" fill="#1B1B1F">Accounting &amp; XIRR <tspan font-size="11" font-weight="400" fill="#80868B">· core/accounting.py, xirr.py</tspan></text>
+<text x="538" y="517" font-size="12" fill="#5F6368">Holdings (avg cost) · totals · total return · XIRR</text>
+
+<g filter="url(#sh)"><rect x="520" y="556" width="380" height="62" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="564" width="4" height="46" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="580" font-size="13.5" font-weight="700" fill="#1B1B1F">Value history <tspan font-size="11" font-weight="400" fill="#80868B">· core/history.py</tspan></text>
+<text x="538" y="599" font-size="12" fill="#5F6368">Portfolio value and net invested over time</text>
+
+<g filter="url(#sh)"><rect x="520" y="634" width="380" height="66" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="642" width="4" height="50" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="658" font-size="13.5" font-weight="700" fill="#1B1B1F">Price cache <tspan font-size="11" font-weight="400" fill="#80868B">· pricing/cache.py</tspan></text>
+<text x="538" y="677" font-size="12" fill="#5F6368">Per-ticker TTL · shared fetches · bad-ticker memory</text>
+
+<g filter="url(#sh)"><rect x="520" y="716" width="380" height="84" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="724" width="4" height="68" rx="2" fill="#2E7D32"/></g>
+<text x="538" y="740" font-size="13.5" font-weight="700" fill="#1B1B1F">Prices + snapshot fallback <tspan font-size="11" font-weight="400" fill="#80868B">· pricing/service.py</tspan></text>
+<text x="538" y="759" font-size="12" fill="#5F6368">Live: yfinance, else price_snapshot.json</text>
+<text x="538" y="778" font-size="12" fill="#5F6368">labelled "Prices as of &lt;date&gt;" · test fakes offline</text>
+
+<path d="M710,234 V250" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M710,375 V392" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<rect x="758.2" y="372.5" width="63.6" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="790" y="386.5" font-size="11" text-anchor="middle" fill="#444">validate</text>
+<path d="M710,458 V474" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<rect x="752" y="455" width="76" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="790" y="469" font-size="11" text-anchor="middle" fill="#444">clean rows</text>
+<path d="M710,540 V556" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<path d="M710,618 V634" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<rect x="747" y="615" width="86" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="790" y="629" font-size="11" text-anchor="middle" fill="#444">needs prices</text>
+<path d="M710,700 V716" fill="none" stroke="#444" stroke-width="2" stroke-linejoin="round" marker-end="url(#ah)"/>
+<rect x="770" y="697" width="40" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="790" y="711" font-size="11" text-anchor="middle" fill="#444">miss</text>
+
+<!-- Prices back to calculations, and out to Yahoo -->
+<path d="M900,752 H938 V507 H900" fill="none" stroke="#B8860B" stroke-width="2" stroke-linejoin="round" marker-end="url(#ahb)"/>
+<rect x="910" y="560" width="56" height="38" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="938" y="574" font-size="11" text-anchor="middle" fill="#B8860B">daily</text>
+<text x="938" y="590" font-size="11" text-anchor="middle" fill="#B8860B">closes</text>
+<path d="M900,772 H975 V200 H1040" fill="none" stroke="#B8860B" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#ahb)"/>
+<rect x="940" y="401" width="70" height="38" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="975" y="415" font-size="11" text-anchor="middle" fill="#B8860B">live fetch</text>
+<text x="975" y="431" font-size="11" text-anchor="middle" fill="#B8860B">yfinance</text>
+
+<!-- External -->
+<g filter="url(#sh)"><rect x="1040" y="130" width="220" height="140" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="138" width="4" height="124" rx="2" fill="#B8860B"/></g>
+<text x="1058" y="154" font-size="13.5" font-weight="700" fill="#1B1B1F">Yahoo Finance</text>
+<text x="1058" y="173" font-size="12" fill="#5F6368">via yfinance (unofficial)</text>
+<text x="1058" y="192" font-size="12" fill="#5F6368">Unadjusted daily closes</text>
+<text x="1058" y="211" font-size="12" fill="#5F6368">May be delayed, rate limited</text>
+<text x="1058" y="230" font-size="12" fill="#5F6368">or blocked</text>
+
+<!-- Hosting -->
+<g filter="url(#sh)"><rect x="1040" y="390" width="220" height="100" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="398" width="4" height="84" rx="2" fill="#5E35B1"/></g>
+<text x="1058" y="414" font-size="13.5" font-weight="700" fill="#1B1B1F">Frontend</text>
+<text x="1058" y="433" font-size="12" fill="#5F6368">Cloudflare Pages (free)</text>
+<text x="1058" y="452" font-size="12" fill="#5F6368">Static React build</text>
+<text x="1058" y="471" font-size="12" fill="#5F6368">*.pages.dev public URL</text>
+
+<g filter="url(#sh)"><rect x="1040" y="520" width="220" height="118" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="528" width="4" height="102" rx="2" fill="#5E35B1"/></g>
+<text x="1058" y="544" font-size="13.5" font-weight="700" fill="#1B1B1F">Backend</text>
+<text x="1058" y="563" font-size="12" fill="#5F6368">Render free web service</text>
+<text x="1058" y="582" font-size="12" fill="#5F6368">FastAPI, one worker, 512 MB</text>
+<text x="1058" y="601" font-size="12" fill="#5F6368">Sleeps after 15 min idle,</text>
+<text x="1058" y="620" font-size="12" fill="#5F6368">about 1 min to wake</text>
+
+<g filter="url(#sh)"><rect x="1040" y="662" width="220" height="100" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="670" width="4" height="84" rx="2" fill="#5E35B1"/></g>
+<text x="1058" y="686" font-size="13.5" font-weight="700" fill="#1B1B1F">Wiring</text>
+<text x="1058" y="705" font-size="12" fill="#5F6368">Frontend reads VITE_API_URL</text>
+<text x="1058" y="724" font-size="12" fill="#5F6368">Backend CORS allows the</text>
+<text x="1058" y="743" font-size="12" fill="#5F6368">frontend origin only</text>
+
+<path d="M1150,490 V520" fill="none" stroke="#5E35B1" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#ahp)"/>
+<rect x="1160.1" y="494" width="69.8" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="1195" y="508" font-size="11" text-anchor="middle" fill="#5E35B1">calls API</text>
+
+<!-- Request flow -->
+<rect x="20" y="830" width="1260" height="72" rx="12" fill="#FFFFFF" stroke="#E3E1DA" filter="url(#sh)"/>
+<text x="40" y="855" font-size="12.5" font-weight="700" fill="#1B1B1F">Request flow</text>
+<text x="40" y="874" font-size="12" fill="#5F6368">1  Pick the sample, upload a CSV or add a row   →   2  POST /validate; clean rows kept in React state   →   3  Tabs POST them to /portfolio and /performance</text>
+<text x="40" y="892" font-size="12" fill="#5F6368">4  Backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend   →   5  JSON back; React renders donut, tables, metrics and chart</text>
+</svg>

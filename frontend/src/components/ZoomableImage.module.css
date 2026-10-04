@@ -1,0 +1,124 @@
+.thumb {
+  position: relative;
+  display: block;
+  width: 100%;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--bg);
+  cursor: zoom-in;
+  overflow: hidden;
+}
+
+.thumbImg {
+  display: block;
+  width: 100%;
+  height: auto;
+  transition: transform var(--dur-base) var(--ease-out);
+}
+
+.thumb:hover .thumbImg {
+  transform: scale(1.01);
+}
+
+.thumbHint {
+  position: absolute;
+  right: var(--sp-3);
+  bottom: var(--sp-3);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px var(--sp-3);
+  border-radius: var(--radius-pill);
+  background: rgba(28, 27, 25, 0.82);
+  color: #fff;
+  font-size: var(--fs-12);
+  font-weight: 600;
+}
+
+.hintIcon {
+  width: 14px;
+  height: 14px;
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 50;
+  display: flex;
+  flex-direction: column;
+  background: var(--bg);
+  outline: none;
+  animation: fade var(--dur-base) var(--ease-out);
+}
+
+.toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sp-3);
+  padding: var(--sp-3) var(--gutter);
+  border-bottom: 1px solid var(--border);
+  background: var(--surface);
+}
+
+.toolbarTitle {
+  font-family: var(--font-serif);
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.tools {
+  display: flex;
+  align-items: center;
+  gap: var(--sp-2);
+  flex: none;
+}
+
+.zoomLevel {
+  min-width: 3.5em;
+  text-align: center;
+  font-size: var(--fs-14);
+  font-variant-numeric: tabular-nums;
+  color: var(--text-2);
+}
+
+.stage {
+  flex: 1;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: grab;
+  touch-action: none;
+}
+
+.stage:active {
+  cursor: grabbing;
+}
+
+.full {
+  max-width: 96vw;
+  max-height: calc(100vh - 140px);
+  user-select: none;
+  transform-origin: center center;
+  will-change: transform;
+}
+
+.help {
+  text-align: center;
+  font-size: var(--fs-12);
+  color: var(--text-3);
+  padding: var(--sp-2) var(--gutter) var(--sp-3);
+}
+
+@keyframes fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
