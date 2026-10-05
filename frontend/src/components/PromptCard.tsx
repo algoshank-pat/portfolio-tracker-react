@@ -63,17 +63,16 @@ export function PromptCard() {
           The prompt couldn’t be loaded. <a href={PROMPT_URL}>Open it as a text file</a>.
         </p>
       ) : (
-        <div className={s.wrap} data-open={open ? "" : undefined}>
-          <pre id={id} className={s.prompt} tabIndex={0} aria-label="Build prompt">
+        <div className={s.wrap} data-open={open ? "" : undefined} tabIndex={0} role="region" aria-label="Build prompt, scrollable">
+          <pre id={id} className={s.prompt} aria-label="Build prompt">
             {text ?? "Loading…"}
           </pre>
-          {!open && <div className={s.fade} aria-hidden="true" />}
         </div>
       )}
       {text && (
         <div className={s.more}>
           <Button variant="ghost" size="small" onClick={() => setOpen((o) => !o)} aria-expanded={open} aria-controls={id}>
-            {open ? "Show less" : "Show the full prompt"}
+            {open ? "Collapse" : "Expand to full length"}
           </Button>
         </div>
       )}

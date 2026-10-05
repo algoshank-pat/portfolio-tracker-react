@@ -21,8 +21,11 @@
 
 .wrap {
   position: relative;
-  max-height: 260px;
-  overflow: hidden;
+  max-height: 340px;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-gutter: stable;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: var(--surface-2);
@@ -48,15 +51,6 @@
   box-shadow: inset 0 0 0 2px var(--focus);
 }
 
-.fade {
-  position: absolute;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 96px;
-  background: linear-gradient(180deg, transparent, var(--surface-2) 85%);
-  pointer-events: none;
-}
 
 .more {
   display: flex;
