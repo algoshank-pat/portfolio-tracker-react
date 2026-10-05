@@ -1,4 +1,27 @@
-# Step 10: repo and deploy checklist
+# Step 10: repo and deploy
+
+## What was deployed (2026-10-05)
+
+| Piece | Where | Notes |
+| --- | --- | --- |
+| Repo | https://github.com/algoshank-pat/portfolio-tracker-react | Public, branch `main` |
+| Backend | https://portfolio-tracker-react.onrender.com | Render web service **`portfolio-tracker-react`** (not `portfolio-tracker-api` as planned below), Free instance, Python 3.12, uv |
+| Frontend | https://portfolio-tracker-react.pages.dev | Cloudflare **Pages** project `portfolio-tracker-react` |
+
+What differed from the plan:
+
+- Cloudflare's "Create an app" screen now defaults to **Workers**. Pages is reached via the small link at the bottom: *"Need to use the legacy Pages workflow? Continue to Pages"*. The Workers form (with `npx wrangler deploy`) must not be used for this repo as-is.
+- Because the Pages URL came out as planned, `CORS_ORIGINS=https://portfolio-tracker-react.pages.dev` set during the Render setup was already correct; step (e) needed no change.
+- Render's outbound IPs (shown under Connect) are `74.220.48.0/24` and `74.220.56.0/24`. They're only relevant if Yahoo ever blocks them.
+- Smoke test passed: `/health` ok, CORS allows exactly the Pages origin, live Yahoo prices from Render (`price_source: live`), sample value $16,229.19, XIRR 18.4%.
+- Not yet verified on the hosted site: cold start after 15 idle minutes, and a CSV upload from a real browser.
+
+Every push to `main` triggers a new build on both Render and Cloudflare.
+
+---
+
+## Original checklist
+
 
 Nothing here is run until Shashank says "go" for that specific action. All sign-ins happen in Shashank's own browser; no tokens or passwords go into files or commands.
 Settings were checked against the Render and Cloudflare docs on 2026-10-04. Re-check anything that looks different on screen.

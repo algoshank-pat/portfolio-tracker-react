@@ -25,6 +25,7 @@ portfolio-tracker-react/
   docs/       architecture diagram (.svg, .drawio), QA checklist
   backend/    FastAPI app (app/), tests, sample CSV + price snapshot (data/), snapshot script
   frontend/   Vite React TypeScript app (src/), static files (public/)
+  samples/    extra made-up CSVs for testing uploads (two valid, one with errors)
 ```
 
 Full details: [SPEC.md](SPEC.md). Rules for AI coding agents: [AGENTS.md](AGENTS.md).
@@ -78,7 +79,13 @@ This writes `backend/data/price_snapshot.json` (daily closes for the sample tick
 
 ## Status
 
-Steps 1 to 9 of 10 done (built and tested locally). Step 10, repo and deploy, has not started.
+All 10 steps done. Deployed on 2026-10-05:
+
+- **App:** https://portfolio-tracker-react.pages.dev (Cloudflare Pages)
+- **API:** https://portfolio-tracker-react.onrender.com (Render free; `/health`, `/docs`)
+- **Repo:** https://github.com/algoshank-pat/portfolio-tracker-react
+
+Every push to `main` redeploys both. Extra made-up CSVs for testing uploads are in [samples/](samples/README.md).
 
 ## Limits (v1)
 

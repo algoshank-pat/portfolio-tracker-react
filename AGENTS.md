@@ -34,7 +34,7 @@ Product spec: [SPEC.md](SPEC.md). Owner: Shashank (GitHub: algoshank-pat).
 | 7 | Tab 3: Historical Performance | Done |
 | 8 | Tab 4: Architecture (and diagram updates) | Done (PNG export pending) |
 | 9 | Polish and hardening | Done |
-| 10 | Repo and deploy: checklist first, each action on my go | Not started |
+| 10 | Repo and deploy: checklist first, each action on my go | Done 2026-10-05 (see docs/DEPLOY.md) |
 
 ## Run / test commands
 
