@@ -5,6 +5,10 @@ import { Icon } from "./ui";
 import { WakingServer } from "./WakingServer";
 import s from "./AppShell.module.css";
 
+export const LINKEDIN = "https://www.linkedin.com/in/shashank-patel/";
+export const GITHUB = "https://github.com/algoshank-pat";
+export const REPO = "https://github.com/algoshank-pat/portfolio-tracker-react";
+
 export interface TabDef {
   id: string;
   label: string;
@@ -122,8 +126,25 @@ export function AppShell({
       </main>
       <footer className={s.footer}>
         <div className={s.footerInner}>
-          <span>Read-only demo. Not investment advice.</span>
-          <span>USD only · daily closes · splits and dividends ignored</span>
+          <div className={s.credit}>
+            <span className={s.builtBy}>
+              Built by <strong>Shashank Patel</strong>
+            </span>
+            <nav className={s.social} aria-label="Shashank Patel elsewhere">
+              <a href={LINKEDIN} target="_blank" rel="noopener noreferrer" className={s.socialLink}>
+                <Icon name="linkedin" className={s.socialIcon} />
+                Connect on LinkedIn
+              </a>
+              <a href={GITHUB} target="_blank" rel="noopener noreferrer" className={s.socialLink}>
+                <Icon name="github" className={s.socialIcon} />
+                Follow on GitHub
+              </a>
+            </nav>
+          </div>
+          <div className={s.fineprint}>
+            <span>Read-only demo. Not investment advice.</span>
+            <span>USD only · daily closes · splits and dividends ignored</span>
+          </div>
         </div>
       </footer>
     </>

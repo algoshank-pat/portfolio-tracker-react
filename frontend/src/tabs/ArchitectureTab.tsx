@@ -1,5 +1,6 @@
 // Tab 4: the architecture diagram plus a plain-English tour of the parts and the request flow.
 
+import { REPO } from "../components/AppShell";
 import { Card, Icon, ui } from "../components/ui";
 import { ZoomableImage } from "../components/ZoomableImage";
 import s from "./ArchitectureTab.module.css";
@@ -56,6 +57,10 @@ export function ArchitectureTab() {
               <a href="/architecture.drawio" download="portfolio-tracker-architecture.drawio">
                 <Icon name="download" className={s.dlIcon} />
                 draw.io source
+              </a>
+              <a href={REPO} target="_blank" rel="noopener noreferrer">
+                <Icon name="github" className={s.dlIcon} />
+                Code on GitHub
               </a>
             </span>
           </figcaption>

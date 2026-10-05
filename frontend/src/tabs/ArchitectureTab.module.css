@@ -14,7 +14,8 @@
 
 .downloads {
   display: inline-flex;
-  gap: var(--sp-4);
+  flex-wrap: wrap;
+  gap: var(--sp-2) var(--sp-4);
 }
 
 .downloads a {
