@@ -17,3 +17,12 @@ def test_copies_match(source: Path, copy: Path):
     if not copy.exists():
         pytest.skip(f"{copy.relative_to(ROOT)} not created yet")
     assert copy.read_bytes().replace(b"\r\n", b"\n") == source.read_bytes().replace(b"\r\n", b"\n")
+
+
+def test_build_prompt_matches_docs():
+    copy = ROOT / "frontend" / "public" / "build-prompt.txt"
+    if not copy.exists():
+        pytest.skip("frontend/public/build-prompt.txt not created yet")
+    doc = (ROOT / "docs" / "PROMPT.md").read_text(encoding="utf-8").replace("\r\n", "\n")
+    block = doc.split("```text\n", 1)[1].split("\n```", 1)[0]
+    assert copy.read_text(encoding="utf-8").replace("\r\n", "\n").strip() == block.strip()

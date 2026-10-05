@@ -1,6 +1,7 @@
 // Tab 4: the architecture diagram plus a plain-English tour of the parts and the request flow.
 
 import { REPO } from "../components/AppShell";
+import { PromptCard } from "../components/PromptCard";
 import { Card, Icon, ui } from "../components/ui";
 import { ZoomableImage } from "../components/ZoomableImage";
 import s from "./ArchitectureTab.module.css";
@@ -103,6 +104,8 @@ export function ArchitectureTab() {
           </p>
         </section>
       </div>
+
+      <PromptCard />
     </div>
   );
 }
