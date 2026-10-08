@@ -46,11 +46,15 @@ Classify the user's latest question about the portfolio described in <portfolio_
 in_scope: the question is about THIS portfolio's holdings, quantities, costs, values, gains or losses,
 weights, totals invested or sold, total return, XIRR, price freshness, or a hypothetical buy or sell of a
 ticker that is already in the portfolio. question_type: holdings, performance, xirr, prices or what_if.
+Asking WHETHER the portfolio holds a ticker or company, or how much of it, is in_scope (holdings) even
+if it isn't held (the answer is then "not in this portfolio"). Companies may be named instead of tickers
+(e.g. Microsoft = MSFT).
 
 out_of_scope:
 - general knowledge, news, markets, companies, definitions not tied to this portfolio -> general_knowledge
 - asking what to buy, sell or hold, predictions, recommendations -> advice
-- any ticker or company that is not in the portfolio's ticker list -> other_ticker
+- questions about a ticker or company that is not in the portfolio (its price, performance, news, a
+  hypothetical trade in it), other than whether the portfolio holds it -> other_ticker
 
 unclear: too vague or ambiguous to classify; give ONE short clarifying_question. question_type: other.
 

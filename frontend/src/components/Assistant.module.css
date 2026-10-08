@@ -45,7 +45,7 @@
 @media (min-width: 768px) {
   .panel {
     inset: auto var(--gutter) 24px auto;
-    width: min(760px, calc(100vw - 2 * var(--gutter)));
+    width: min(440px, calc(100vw - 2 * var(--gutter)));
     height: min(600px, calc(100vh - 48px));
     border: 1px solid var(--border);
     border-radius: var(--radius-md);
@@ -100,7 +100,28 @@
   height: 16px;
 }
 
-/* Chat / Activity switch: phones only */
+@media (min-width: 768px) {
+  .panelWide {
+    width: min(760px, calc(100vw - 2 * var(--gutter)));
+  }
+}
+
+.activityLink {
+  border: none;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: var(--accent);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  cursor: pointer;
+}
+
+.activityLink:hover {
+  color: var(--accent-hover);
+}
+
+/* Chat / Activity switch: phones only, and only while activity is shown */
 .switch {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -147,7 +168,7 @@
 }
 
 @media (min-width: 768px) {
-  .body {
+  .bodyWide {
     grid-template-columns: 1.35fr 1fr;
   }
   .body[data-view] .chat,
@@ -201,6 +222,36 @@
   overflow-wrap: anywhere;
   font-variant-numeric: tabular-nums;
   animation: rise var(--dur-fast) var(--ease-out);
+}
+
+.rich {
+  white-space: normal;
+}
+
+.rich p {
+  margin: 0;
+}
+
+.rich p + p,
+.rich p + ul,
+.rich p + ol,
+.rich ul + p,
+.rich ol + p {
+  margin-top: var(--sp-2);
+}
+
+.rich ul,
+.rich ol {
+  margin: var(--sp-1) 0 0;
+  padding-left: 1.25em;
+}
+
+.rich li + li {
+  margin-top: 2px;
+}
+
+.rich strong {
+  font-weight: 650;
 }
 
 .user {

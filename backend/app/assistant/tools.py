@@ -77,9 +77,17 @@ def build_tools(tx: pd.DataFrame, prices: PriceService) -> list[BaseTool]:
 
     def get_holdings() -> dict[str, Any]:
         p = portfolio()
+        # Totals as the dashboard's "Unrealized gain/loss" card computes them: holdings with a price only.
+        priced = [h for h in p["holdings"] if h["current_price"] is not None]
+        cost = sum(h["avg_cost"] * h["quantity"] for h in priced)
+        unrealized = sum(h["unrealized_pl"] for h in priced)
         return {
             **_prices(p),
             "current_value": money(p["current_value"]),
+            "number_of_holdings": len(p["holdings"]),
+            "total_cost_basis": money(cost),
+            "total_unrealized_gain_loss": signed_money(unrealized),
+            "total_unrealized_gain_loss_pct": signed_pct(unrealized / cost) if cost > 0 else None,
             "holdings": [
                 {
                     "ticker": h["ticker"],
@@ -173,7 +181,8 @@ def build_tools(tx: pd.DataFrame, prices: PriceService) -> list[BaseTool]:
 
     return [
         make(get_holdings, "Current holdings: quantity, average cost, current price, market value, unrealized "
-             "gain/loss and weight per ticker, plus total current value.", NoArgs),
+             "gain/loss and weight per ticker, plus totals: current value, cost basis and total unrealized "
+             "gain/loss ($ and %).", NoArgs),
         make(get_performance, "Lifetime totals: total invested, total sold, current value, total return ($ and % of "
              "invested) and XIRR.", NoArgs),
         make(get_xirr, "The portfolio's XIRR (annualized, timing-weighted return) with a one-line explanation.", NoArgs),

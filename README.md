@@ -7,7 +7,7 @@ A read-only stock portfolio tracker. Upload a CSV of buy and sell transactions (
 3. **Input Transactions**: sample portfolio, CSV upload (drag and drop), or manual entry, all validated by the backend. A header card on every page also offers "Upload your CSV".
 4. **Architecture**: how the app is built, with a zoomable diagram and the request flow.
 
-Plus an **"Ask your portfolio" assistant**: the round "Ask" button bottom-right opens a chat about the loaded portfolio only. Every question first goes through a scope check; the numbers come from tools that wrap the same tested calculations as the dashboards (the model never does arithmetic), and an Activity panel shows each step as it happens. It explains; it never recommends buying or selling.
+Plus an **"Ask your portfolio" assistant**: the round "Ask" button bottom-right opens a chat about the loaded portfolio only. Every question first goes through a scope check; the numbers come from tools that wrap the same tested calculations as the dashboards (the model never does arithmetic), and a "Show activity" link reveals each step as it happens (handy for demos). It explains; it never recommends buying or selling.
 
 **Privacy:** your transactions are saved in this browser only (localStorage), never on our server. "Clear my data" removes them and shows the sample again. The backend is stateless: the browser sends its transactions with each request and the server stores nothing. Chat history lives in the open tab only. Use sample or made-up data.
 
@@ -63,7 +63,7 @@ The assistant needs `ANTHROPIC_API_KEY` in the backend's environment (set it in 
 ## Checks
 
 ```powershell
-cd backend;  uv run pytest            # 121 tests, offline (prices and the LLM are faked)
+cd backend;  uv run pytest            # 125 tests, offline (prices and the LLM are faked)
 cd frontend; npm run build            # TypeScript check + production build
 ```
 

@@ -122,3 +122,21 @@ def test_what_if_reports_trade_cash_and_changes_so_the_model_never_calculates(to
 def test_sell_proceeds_net_of_fees(tools):
     r = tools["what_if"].invoke({"side": "SELL", "ticker": "VTI", "quantity": 10, "price": 350, "fees": 5})
     assert r["trade_proceeds"] == "$3,495.00" and r["change"]["total_sold"] == "+$3,495.00"  # 10 x 350 - 5
+
+
+def test_get_holdings_totals_match_the_dashboard(tools):
+    r = tools["get_holdings"].invoke({})
+    # Cost basis: AAPL 10 x 2827/15 + MSFT 3 x 400.20 + VTI 30 x 7700/30 = 1,884.67 + 1,200.60 + 7,700 = 10,785.27
+    assert r["number_of_holdings"] == 3
+    assert r["total_cost_basis"] == "$10,785.27"
+    # Unrealized: 12,260 - 10,785.27 = 1,474.73 -> 13.7% of cost
+    assert r["total_unrealized_gain_loss"] == "+$1,474.73"
+    assert r["total_unrealized_gain_loss_pct"] == "+13.7%"
+
+
+def test_totals_leave_out_holdings_without_a_price(sample_tx):
+    t = {x.name: x for x in build_tools(sample_tx, service(FakeLive({"AAPL": 200.0, "VTI": 300.0})))}
+    r = t["get_holdings"].invoke({})
+    # MSFT has no price: cost 1,884.67 + 7,700 = 9,584.67; unrealized 11,000 - 9,584.67 = 1,415.33
+    assert r["total_cost_basis"] == "$9,584.67" and r["total_unrealized_gain_loss"] == "+$1,415.33"
+    assert r["missing_prices"] == ["MSFT"]

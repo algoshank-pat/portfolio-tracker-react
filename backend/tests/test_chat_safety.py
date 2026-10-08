@@ -80,7 +80,7 @@ def test_each_tool_through_chat(name, args, expect):
     _, ev = ask(client(m))
     res = next(e for e in ev if e["type"] == "tool_result")
     assert res["tool"] == name and expect in res["summary"]
-    assert ev[-1]["text"].endswith(f"Tools used: {name}.")
+    assert ev[-1]["tools_used"] == [name] and "Tools used" not in ev[-1]["text"]  # shown in Activity, not chat
 
 
 def test_tool_results_reach_the_model_as_json_data():
@@ -209,3 +209,15 @@ def test_system_prompt_forbids_all_arithmetic():
 
     assert "no multiplying, adding, subtracting or percentages" in SYSTEM
     assert "trade cost or proceeds, and changes" in SYSTEM
+
+
+def test_system_prompt_asks_for_the_total_first_and_simple_formatting():
+    from app.assistant.chat import SYSTEM
+
+    assert "the total first" in SYSTEM and "No headings, tables or code." in SYSTEM
+
+
+def test_scope_prompt_treats_do_i_hold_x_as_in_scope():
+    from app.assistant.scope import SYSTEM
+
+    assert "Asking WHETHER the portfolio holds a ticker or company" in SYSTEM and "Microsoft = MSFT" in SYSTEM

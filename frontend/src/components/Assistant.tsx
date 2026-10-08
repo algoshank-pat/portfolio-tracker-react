@@ -6,6 +6,7 @@ import { useCallback, useEffect, useId, useRef, useState, type KeyboardEvent } f
 import { api, ApiError } from "../api/client";
 import type { ChatEvent, ChatTurn } from "../api/types";
 import { usePortfolio } from "../state/portfolio";
+import { RichText } from "./RichText";
 import { Icon, cx } from "./ui";
 import { useServerStatus } from "./WakingServer";
 import s from "./Assistant.module.css";
@@ -60,6 +61,8 @@ export function Assistant() {
   const status = useServerStatus();
   const [open, setOpen] = useState(false);
   const [view, setView] = useState<"chat" | "activity">("chat");
+  // The Activity panel is for demos: hidden until someone clicks "Show activity".
+  const [showActivity, setShowActivity] = useState(false);
   const [msgs, setMsgs] = useState<Msg[]>([]);
   const [steps, setSteps] = useState<Step[]>([]);
   const [draft, setDraft] = useState("");
@@ -173,7 +176,7 @@ export function Assistant() {
       {open && (
         <div
           ref={panel}
-          className={s.panel}
+          className={cx(s.panel, showActivity && s.panelWide)}
           role="dialog"
           aria-modal="true"
           aria-labelledby={titleId}
@@ -185,7 +188,18 @@ export function Assistant() {
                 Ask your portfolio
               </h2>
               <p className={s.sub}>
-                {useSample ? "About the sample portfolio" : "About your transactions"} · not investment advice
+                {useSample ? "About the sample portfolio" : "About your transactions"} · not investment advice ·{" "}
+                <button
+                  type="button"
+                  className={s.activityLink}
+                  aria-pressed={showActivity}
+                  onClick={() => {
+                    setShowActivity((on) => !on);
+                    setView("chat");
+                  }}
+                >
+                  {showActivity ? "Hide activity" : "Show activity"}
+                </button>
               </p>
             </div>
             <button type="button" className={s.close} onClick={close} aria-label="Close the assistant">
@@ -193,22 +207,24 @@ export function Assistant() {
             </button>
           </header>
 
-          <div className={s.switch} role="tablist" aria-label="Assistant view">
-            {(["chat", "activity"] as const).map((v) => (
-              <button
-                key={v}
-                type="button"
-                role="tab"
-                aria-selected={view === v}
-                className={cx(s.switchBtn, view === v && s.switchOn)}
-                onClick={() => setView(v)}
-              >
-                {v === "chat" ? "Chat" : `Activity${steps.length ? ` (${steps.length})` : ""}`}
-              </button>
-            ))}
-          </div>
+          {showActivity && (
+            <div className={s.switch} role="tablist" aria-label="Assistant view">
+              {(["chat", "activity"] as const).map((v) => (
+                <button
+                  key={v}
+                  type="button"
+                  role="tab"
+                  aria-selected={view === v}
+                  className={cx(s.switchBtn, view === v && s.switchOn)}
+                  onClick={() => setView(v)}
+                >
+                  {v === "chat" ? "Chat" : `Activity${steps.length ? ` (${steps.length})` : ""}`}
+                </button>
+              ))}
+            </div>
+          )}
 
-          <div className={s.body} data-view={view}>
+          <div className={cx(s.body, showActivity && s.bodyWide)} data-view={showActivity ? view : "chat"}>
             <section className={s.chat} aria-label="Conversation">
               <div className={s.log} aria-live="polite" tabIndex={0}>
                 {!msgs.length && (
@@ -222,7 +238,7 @@ export function Assistant() {
                 )}
                 {msgs.map((m) => (
                   <div key={m.id} className={cx(s.msg, m.role === "user" ? s.user : s.bot, m.kind && s[m.kind])}>
-                    {m.text}
+                    {m.role === "assistant" ? <RichText text={m.text} className={s.rich} /> : m.text}
                   </div>
                 ))}
                 {busy && (
@@ -264,21 +280,23 @@ export function Assistant() {
               </form>
             </section>
 
-            <section className={s.activity} aria-label="Activity">
-              <h3 className={s.actTitle}>Activity</h3>
-              {!steps.length ? (
-                <p className={s.actEmpty}>Each step appears here as it happens: the context check, every tool call and its result, then the answer.</p>
-              ) : (
-                <ol className={s.steps}>
-                  {steps.map((st) => (
-                    <li key={st.id} className={cx(s.step, s[st.tone])}>
-                      {st.text}
-                    </li>
-                  ))}
-                </ol>
-              )}
-              <div ref={stepsEnd} />
-            </section>
+            {showActivity && (
+              <section className={s.activity} aria-label="Activity">
+                <h3 className={s.actTitle}>Activity</h3>
+                {!steps.length ? (
+                  <p className={s.actEmpty}>Each step appears here as it happens: the context check, every tool call and its result, then the answer.</p>
+                ) : (
+                  <ol className={s.steps}>
+                    {steps.map((st) => (
+                      <li key={st.id} className={cx(s.step, s[st.tone])}>
+                        {st.text}
+                      </li>
+                    ))}
+                  </ol>
+                )}
+                <div ref={stepsEnd} />
+              </section>
+            )}
           </div>
         </div>
       )}

@@ -5,7 +5,7 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 
 ## Automated
 
-- [ ] `cd backend; uv run pytest` passes (121 tests, no network, no API key: prices and the LLM are faked).
+- [ ] `cd backend; uv run pytest` passes (125 tests, no network, no API key: prices and the LLM are faked).
 - [ ] Vulnerability checks: `npm audit` in `frontend/` and the OSV check on `uv export` (README) report 0 known issues.
 - [ ] `cd frontend; npm run build` passes with no TypeScript errors.
 
@@ -59,7 +59,10 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 
 - [ ] The round "Ask" button shows bottom-right once a portfolio is loaded; it opens the panel with focus in the question box.
 - [ ] Desktop: chat on the left, Activity on the right. Phone (360–375 px): full-screen sheet with a Chat / Activity switch; no sideways scroll.
-- [ ] "What is my XIRR?": Activity shows Q, Question received, Context check: in scope, Tool call: get_xirr(), Result: …, Answer sent. The answer ends with "Tools used: get_xirr." and its number matches the Historical Performance tab.
+- [ ] Activity is hidden by default; the "Show activity" link in the panel header reveals it (wider panel) and "Hide activity" hides it again.
+- [ ] "What is my XIRR?": with activity shown, Activity lists Q, Question received, Context check: in scope, Tool call: get_xirr(), Result: …, Answer sent. Tools used: get_xirr. The chat answer has no "Tools used" line, and its number matches the Historical Performance tab.
+- [ ] "What's my unrealized gain?" leads with the total (matches the dashboard's Unrealized gain/loss card), then a short list; **bold** and bullets render, no raw asterisks.
+- [ ] "Do I have Microsoft?" (when MSFT isn't held, e.g. after uploading samples/long_term_investor.csv) → a plain "not in this portfolio" answer, not a decline.
 - [ ] "Which holding is largest?" uses get_holdings; values match the Current Portfolio tab.
 - [ ] "What if I sell 2 AAPL?" (sample) uses what_if; before/after values are shown; "sell 99 MSFT" is rejected ("only 3 held").
 - [ ] "Should I buy more NVDA?" → advice decline, Activity stops at "Declined: not about this portfolio", no tool calls.

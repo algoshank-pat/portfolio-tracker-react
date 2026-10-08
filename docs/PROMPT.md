@@ -47,8 +47,8 @@ Clean, light, editorial and beautiful: warm white background, one ink-blue accen
 ASSISTANT ("Ask your portfolio")
 - A pop-up assistant (an "Ask" button bottom-right) that answers questions about the loaded portfolio only. Claude Haiku 5.5 through LangChain, so another provider can be swapped in via settings.
 - Every message first goes through a scope check that returns JSON: in_scope / out_of_scope / unclear, a one-line reason and a question type. General knowledge, buy/sell advice and tickers not in the portfolio get a polite decline and no tools run; unclear gets one clarifying question.
-- The model never does arithmetic: tools wrap the tested code (get_holdings, get_performance, get_xirr, get_price_status, what_if for one hypothetical buy or sell). Every answer names the tools used and says so when prices are a stored snapshot.
-- An Activity panel beside the chat shows each step as it streams: question received, context check, each tool call with arguments, result summary, answer with tools used.
+- The model never does arithmetic: tools wrap the tested code (get_holdings, get_performance, get_xirr, get_price_status, what_if for one hypothetical buy or sell). Tools return totals, trade cost or proceeds, and before/after changes so the model never adds anything up. Answers say so when prices are a stored snapshot.
+- A small "Show activity" link (for demos) opens an Activity panel beside the chat that shows each step as it streams: question received, context check, each tool call with arguments, result summary, answer with tools used.
 - Limits: 500-character messages, at most 4 tool-call turns, the last 10 messages as context; chat history lives in the open tab only.
 - Security: the API key is a server environment variable only; CSV text is data, never instructions; message bodies and transactions are never logged; tracing is off; it explains and never recommends buying or selling.
 

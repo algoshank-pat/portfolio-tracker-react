@@ -50,7 +50,7 @@ def test_in_scope_question_streams_every_step():
     assert ev[1]["decision"] == "in_scope"
     assert ev[2] == {"type": "tool_call", "tool": "get_xirr", "args": {}, "turn": 1}
     assert ev[3]["summary"].startswith("XIRR +") and "live, as of 2026-01-02" in ev[3]["summary"]
-    assert ev[4]["text"].endswith("Tools used: get_xirr.") and ev[4]["tools_used"] == ["get_xirr"]
+    assert ev[4]["text"] == "Your XIRR is shown above." and ev[4]["tools_used"] == ["get_xirr"]  # tools: Activity only
 
 
 def test_declined_question_runs_no_tools():
