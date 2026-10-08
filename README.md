@@ -1,118 +1,70 @@
-# Portfolio Tracker (React + FastAPI)
+# Portfolio Tracker
 
-A read-only stock portfolio tracker. Upload a CSV of buy and sell transactions (or use the made-up sample portfolio) and see:
+A read-only stock portfolio tracker with an AI assistant. Upload your buy and sell trades (or use the made-up sample) and see holdings, returns and XIRR in a clean dashboard.
 
-1. **Current Portfolio** (landing page, sample loaded): current value, allocation donut and holdings table.
-2. **Historical Performance**: total invested, total sold, current value, total return, XIRR, and portfolio value vs net invested over time.
-3. **Input Transactions**: sample portfolio, CSV upload (drag and drop), or manual entry, all validated by the backend. A header card on every page also offers "Upload your CSV".
-4. **Architecture**: how the app is built, with a zoomable diagram and the request flow.
+**Live app: https://portfolio-tracker-react.pages.dev**
 
-Plus an **"Ask your portfolio" assistant**: the round "Ask" button bottom-right opens a chat about the loaded portfolio only. Every question first goes through a scope check; the numbers come from tools that wrap the same tested calculations as the dashboards (the model never does arithmetic), and a "Show activity" link reveals each step as it happens (handy for demos). It explains; it never recommends buying or selling.
+Built with Claude Code for the Maven "Mastering Agentic AI" (Gen Academy) Week 1 project.
 
-**Privacy:** your transactions are saved in this browser only (localStorage), never on our server. "Clear my data" removes them and shows the sample again. The backend is stateless: the browser sends its transactions with each request and the server stores nothing. Chat history lives in the open tab only. Use sample or made-up data.
+## What it does
 
-Built for the Maven "Mastering Agentic AI" (Gen Academy) Week 1 project. The course demo used Streamlit; this version uses React + FastAPI.
-
-## Stack
-
-- **Frontend:** React 19, Vite, TypeScript, Recharts, self-hosted Inter and Source Serif 4 fonts. Hosted on Cloudflare Pages.
-- **Backend:** Python 3.12 FastAPI, managed with uv. Hosted on Render (free tier, so the first request after 15 idle minutes takes about a minute; the app shows a "Waking the server" notice).
-- **Prices:** Yahoo Finance via yfinance (unofficial, unadjusted daily closes), cached per ticker, with a clearly labelled price snapshot fallback.
-- **Assistant:** Claude Haiku 5.5 (`claude-haiku-5-5`) through LangChain (`langchain-core` + `langchain-anthropic`), so another provider can be swapped in via settings. LangSmith tracing is forced off.
-
-## Folder layout
-
-```
-portfolio-tracker-react/
-  README.md  SPEC.md  AGENTS.md  CLAUDE.md
-  docs/       architecture diagram (.svg, .drawio), QA checklist
-  backend/    FastAPI app (app/), tests, sample CSV + price snapshot (data/), snapshot script
-  frontend/   Vite React TypeScript app (src/), static files (public/)
-  samples/    extra made-up CSVs for testing uploads (two valid, one with errors)
-```
-
-Full details: [SPEC.md](SPEC.md). Rules for AI coding agents: [AGENTS.md](AGENTS.md).
-
-## Running locally (Windows, PowerShell)
-
-Needs uv and Node 20+. Use two terminals.
-
-**Backend** (from `backend/`):
-
-```powershell
-uv sync
-uv run pytest
-uv run uvicorn app.main:app --reload
-```
-
-The API runs on http://127.0.0.1:8000 with interactive docs at `/docs`.
-
-**Frontend** (from `frontend/`):
-
-```powershell
-npm install
-npm run dev
-```
-
-Open http://localhost:5173. The frontend calls `http://127.0.0.1:8000` unless `VITE_API_URL` says otherwise (see `frontend/.env.example`).
-
-Useful backend switches: `$env:PRICE_SOURCE="snapshot"` (use only the stored prices) or `"demo"` (synthetic, labelled; offline).
-
-The assistant needs `ANTHROPIC_API_KEY` in the backend's environment (set it in your own terminal, never in a file). Without it the app still works and the assistant answers "The assistant is unavailable right now." Optional: `LLM_PROVIDER` (default `anthropic`), `CHAT_MODEL` (default `claude-haiku-5-5`).
-
-## Checks
-
-```powershell
-cd backend;  uv run pytest            # 129 tests, offline (prices and the LLM are faked)
-cd frontend; npm run build            # TypeScript check + production build
-```
-
-Manual checks before a release: [docs/QA_CHECKLIST.md](docs/QA_CHECKLIST.md).
-
-## Monitoring the assistant
-
-Each assistant question writes one line to the backend log (Render → your service → **Logs**, search `chat_metrics`):
-
-```text
-chat_metrics outcome=answer decision=in_scope type=xirr tools=get_xirr turns=1 ms=2310 in_tokens=1850 out_tokens=210 est_cost_usd=0.00029
-```
-
-| Field | Meaning |
+| Tab | What you see |
 | --- | --- |
-| `outcome` | `answer`, `declined`, `clarify`, `error` (or `aborted` if the visitor left mid-answer) |
-| `decision`, `type` | The scope check's verdict and question type |
-| `tools`, `turns` | Tool names used and how many tool-call turns (max 4) |
-| `ms` | Time from question to answer |
-| `in_tokens`, `out_tokens` | Tokens across the scope check and every model call |
-| `est_cost_usd` | Estimate from list prices (`CHAT_PRICE_IN_PER_MTOK`, `CHAT_PRICE_OUT_PER_MTOK`; Haiku 5.5 defaults). The Anthropic Console's Usage page has the billed amount |
+| Current Portfolio | Current value, allocation donut, holdings with gain/loss and weight |
+| Historical Performance | Total invested, total return, XIRR, value vs net invested over time |
+| Input Transactions | Sample portfolio, CSV drag-and-drop or manual entry, all validated |
+| Architecture | How the app is built, with a zoomable diagram |
 
-The line never contains the question, the answer, tickers or amounts. LangSmith tracing stays off.
+**Ask your portfolio.** The round "Ask" button opens a chat about the loaded portfolio:
 
-## Refreshing the price snapshot
+- It answers questions like "What's my XIRR?" or "What if I sell 2 AAPL?"
+- Every number comes from the same tested code as the dashboards; the model never does arithmetic.
+- It explains, but never recommends buying or selling. Off-topic questions are politely declined.
+
+## How it works
+
+![Architecture diagram](docs/architecture.svg)
+
+- **Frontend:** React 19, Vite, TypeScript, Recharts, on Cloudflare Pages
+- **Backend:** Python 3.12 FastAPI (uv), on Render's free tier (the first visit after 15 idle minutes takes about a minute to wake)
+- **Prices:** Yahoo Finance daily closes, cached, with a clearly labelled stored-price fallback
+- **Assistant:** Claude Haiku 5.5 through LangChain, with five portfolio tools and a scope check
+
+## Privacy and safety
+
+- Your trades are saved in your browser only. "Clear my data" removes them. The server stores nothing.
+- The API key lives only on the server. CSV text is treated as data, never as instructions.
+- Logs hold counts and timings only, never questions, answers or holdings. Assistant spend is capped at $5/month.
+
+## Run it locally
+
+Needs [uv](https://docs.astral.sh/uv/) and Node 20+. Two terminals:
 
 ```powershell
-cd backend
-uv run python scripts/snapshot_prices.py
+cd backend; uv sync; uv run uvicorn app.main:app --reload
 ```
 
-This writes `backend/data/price_snapshot.json` (daily closes for the sample tickers). The backend uses it only when Yahoo fails, and says "Prices as of <date>, live feed unavailable".
+```powershell
+cd frontend; npm install; npm run dev
+```
 
-## Keeping copies in sync
+Then open http://localhost:5173. Tests: `cd backend; uv run pytest` (129, offline). The assistant needs `ANTHROPIC_API_KEY` in the backend's environment; the rest works without it.
 
-`backend/data/sample_transactions.csv` and `docs/architecture.svg` / `.drawio` are the sources. After changing one, copy it to `frontend/public/`. A backend test fails if the copies drift.
+## Docs
 
-## Status
+| Doc | What's in it |
+| --- | --- |
+| [Developer guide](docs/DEVELOPMENT.md) | Settings, tests, monitoring, price snapshot, deploy |
+| [Spec](docs/SPEC.md) | Every product and design decision |
+| [Status](docs/STATUS.md) | Where things stand, timeline, results |
+| [QA checklist](docs/QA_CHECKLIST.md) | Manual checks before a release |
+| [Deploy notes](docs/DEPLOY.md) | Cloudflare Pages and Render setup |
+| [Build prompt](docs/PROMPT.md) | The one prompt that sums up the build |
+| [Sample CSVs](samples/README.md) | Made-up files for testing uploads |
+| [AGENTS.md](AGENTS.md) | Rules for AI coding agents in this repo |
 
-All 10 steps done. Deployed on 2026-10-05:
+## Limits
 
-- **App:** https://portfolio-tracker-react.pages.dev (Cloudflare Pages)
-- **API:** https://portfolio-tracker-react.onrender.com (Render free; `/health`, `/docs`)
-- **Repo:** https://github.com/algoshank-pat/portfolio-tracker-react
+USD only; splits, dividends and non-US tickers are ignored; daily closing prices. Use sample or made-up data.
 
-The "Ask your portfolio" assistant and browser storage were added on 2026-10-08 (SPEC.md section 11). Every push to `main` redeploys both. Extra made-up CSVs for testing uploads are in [samples/](samples/README.md).
-
-## Limits (v1)
-
-USD only. Splits, dividends and non-US tickers are ignored. Daily closing prices. About 2 MB, 5,000 rows and 25 tickers per request; 60 requests per minute per visitor. Assistant: questions up to 500 characters, at most 4 tool-call turns per question, the last 10 chat messages sent as context.
-
-Read-only demo. Not investment advice.
+Built by [Shashank Patel](https://www.linkedin.com/in/shashank-patel/). Read-only demo. Not investment advice.

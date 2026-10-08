@@ -14,6 +14,7 @@ The React + FastAPI portfolio tracker is live, and since Oct 8 it includes an "A
 | API | https://portfolio-tracker-react.onrender.com | Live on Render free tier; sleeps after 15 idle minutes, ~1 minute to wake |
 | Code | https://github.com/algoshank-pat/portfolio-tracker-react | Public, branch `main`; every push redeploys both hosts |
 | Analytics | Cloudflare Web Analytics | On; 13 visits and 44 page views in the first 24 hours |
+| Monitoring | Render Logs, search `chat_metrics` | One line per question: outcome, tools, time, tokens, estimated cost; never the text |
 
 ## What the app does
 
@@ -42,12 +43,15 @@ Built over five days with Claude Code, one approved step at a time: plan first, 
 
 | Date | Milestone |
 | --- | --- |
+| Oct 8, 2026 | GitHub page simplified: short README, new docs/DEVELOPMENT.md, SPEC moved to docs/ |
+| Oct 8, 2026 | Old Streamlit folder retired; docs/STATUS.md added |
+| Oct 8, 2026 | M1 monitoring: one `chat_metrics` log line per question; live check: XIRR 3.3 s, what-if 4.2 s, advice declined 1.5 s, first question after redeploy 21.3 s |
 | Oct 8, 2026 | Header fix; shorter assistant hint with an example ticker from the loaded portfolio |
 | Oct 8, 2026 | Feedback round: total unrealized gain, "Do I have X?" answered, no "Tools used" in chat, Activity behind a "Show activity" link, clean bold/list rendering |
 | Oct 8, 2026 | Live testing found the model calculating a sale's proceeds; fixed by returning proceeds and changes from the tools |
 | Oct 8, 2026 | Assistant deployed (Render key set, $5 Anthropic workspace cap); live QA run |
 | Oct 7–8, 2026 | Assistant built: scope check, five tools, NDJSON streaming endpoint, pop-up UI, browser storage; 60+ new tests |
-| Oct 7, 2026 | Assistant planned: Haiku 5.5 via LangChain chosen; SPEC.md section 11 written |
+| Oct 7, 2026 | Assistant planned: Haiku 5.5 via LangChain chosen; docs/SPEC.md section 11 written |
 | Oct 5–6, 2026 | Post-launch: scrollable build prompt, Cloudflare Web Analytics on |
 | Oct 5, 2026 | "The prompt behind it" on the Architecture tab; LinkedIn and GitHub links |
 | Oct 5, 2026 | Security check; three made-up sample CSVs |
@@ -75,13 +79,14 @@ Built over five days with Claude Code, one approved step at a time: plan first, 
 | Assistant safety | Key only on Render; CSV text treated as data; tracing off; nothing logged; $5/month cap | Public URL, real API key, real money |
 | Activity panel | Hidden behind a small "Show activity" link | Normal users want just the answer; the step trail is for demos |
 | Analytics | Cloudflare Web Analytics, no IP tracking | Counts visits without cookies or personal data |
+| Monitoring | Own `chat_metrics` log line; LangSmith stays off | Outcome, tools, latency, tokens and cost without sending chat text to a third party |
 | Process | Plan first, one step at a time, explicit "go" before code, commits, pushes and deploys | Keeps the human in control of every outward action |
 
 ## Results
 
 | Measure | Result |
 | --- | --- |
-| Backend tests | 125 passing, offline (fake prices and a fake LLM, no key) |
+| Backend tests | 129 passing, offline (fake prices and a fake LLM, no key) |
 | Frontend | TypeScript check and production build pass |
 | Security | No secrets in git; 0 known vulnerabilities (npm audit; Python packages via OSV); API key never in the frontend bundle or any response |
 | Live assistant | Right tool every time; advice, off-topic and not-held-stock questions declined; 2–5 s per answer when warm (about 20 s right after a wake-up) |
@@ -95,16 +100,18 @@ Built over five days with Claude Code, one approved step at a time: plan first, 
 - [ ] Cold start check: open the site after 15+ idle minutes; expect "Waking the server", then data within about a minute
 - [ ] Upload a real CSV (e.g. `samples/active_trader.csv`), refresh: it should be "restored from this browser"
 - [ ] On a phone: the Ask pop-up, "Show activity", Copy prompt on the Architecture tab
-- [ ] Anthropic Console → Usage: real cost of testing (about 35 questions)
-- [ ] Maven handout: submission format; update SPEC.md
+- [ ] Check cost: Render Logs (`chat_metrics`, estimated) and Anthropic Console → Usage (billed)
+- [ ] Maven handout: submission format; update docs/SPEC.md
 - [ ] Optional: dashboard banner when loading the sample fails; diagram PNG export; paid Render instance for the review week
-- [ ] Before any demo: open the site a few minutes early to wake the backend
+- [ ] Before any demo: open the site a few minutes early to wake the backend and let live prices load
+- [ ] Optional: warm up Yahoo on startup so the first minute after a deploy doesn't fall back to stored prices
 
-Risks: Yahoo could rate-limit Render (the labelled snapshot covers it); a model can't be forced 100% to avoid arithmetic, though the tools now give it every figure; the rate limit trusts `X-Forwarded-For` (accepted; spend is capped); visitors with ad blockers aren't counted.
+Risks: Yahoo could rate-limit Render (the labelled snapshot covers it); right after a deploy or cold start the first Yahoo request can time out, giving about a minute of labelled stored prices (seen once on Oct 8; live again within 70 s); a model can't be forced 100% to avoid arithmetic, though the tools now give it every figure; the rate limit trusts `X-Forwarded-For` (accepted; spend is capped); visitors with ad blockers aren't counted.
 
 ## Where to find more
 
 - `README.md`: what it is, how to run it
-- `SPEC.md`: every decision (sections 8 and 11)
+- `docs/DEVELOPMENT.md`: settings, tests, monitoring, deploy
+- `docs/SPEC.md`: every decision (sections 8 and 11)
 - `docs/QA_CHECKLIST.md`, `docs/DEPLOY.md`, `docs/PROMPT.md` (the one prompt that sums up the build)
 - `docs/architecture.svg`: the architecture diagram (also on the Architecture tab)

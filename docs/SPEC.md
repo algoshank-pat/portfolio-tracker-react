@@ -1,7 +1,7 @@
 # Portfolio Tracker (React + FastAPI): specification
 
 Source: "Portfolio Tracker React - Claude Code Handoff.md" (sections 2, 4 and 8), plus decisions made at kickoff on 2026-10-04.
-Working rules for agents are in [AGENTS.md](AGENTS.md).
+Working rules for agents are in [AGENTS.md](../AGENTS.md).
 
 ## 1. Objective
 

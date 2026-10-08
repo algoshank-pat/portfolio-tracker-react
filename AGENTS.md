@@ -1,7 +1,7 @@
 # AGENTS.md
 
 Instructions for AI coding agents (Claude Code and others) working in this repo.
-Product spec: [SPEC.md](SPEC.md). Owner: Shashank (GitHub: algoshank-pat).
+Product spec: [docs/SPEC.md](docs/SPEC.md). Owner: Shashank (GitHub: algoshank-pat).
 
 ## Rules (read first, non-negotiable)
 
