@@ -10,18 +10,20 @@ from __future__ import annotations
 
 import json
 import logging
+import time
 from typing import Any, Iterator
 
 import pandas as pd
 from langchain_core.language_models import BaseChatModel
 from langchain_core.messages import AIMessage, BaseMessage, HumanMessage, SystemMessage, ToolMessage
 
-from app.assistant.scope import check_scope, decline_text
+from app.assistant.scope import add_usage, check_scope, decline_text
 from app.assistant.tools import build_tools
 from app.config import Settings
 from app.pricing.service import PriceService
 
 log = logging.getLogger("portfolio_tracker.assistant")
+metrics_log = logging.getLogger("portfolio_tracker.metrics")
 
 ERROR_TEXT = "The assistant couldn't answer right now. Please try again in a moment."
 NO_TOOLS_TEXT = "I couldn't look that up for this portfolio. Could you rephrase the question?"
@@ -90,10 +92,49 @@ def run_chat(
     history: list[tuple[str, str]],
     settings: Settings,
 ) -> Iterator[dict[str, Any]]:
+    """The question's events, plus ONE privacy-safe metrics log line when it ends (SPEC.md A15).
+
+    The line holds only counts, names and timings: outcome, scope decision and type, tool names,
+    turns, milliseconds, tokens and estimated cost. Never the question, answer, tickers or amounts.
+    """
+    start = time.perf_counter()
+    usage = {"input_tokens": 0, "output_tokens": 0}
+    m: dict[str, Any] = {"outcome": "aborted", "decision": None, "type": None, "tools": [], "turns": 0}
+    try:
+        for e in _run_chat(model, tx, prices, message, history, settings, usage):
+            t = e["type"]
+            if t == "scope":
+                m["decision"], m["type"] = e["decision"], e["question_type"]
+            elif t == "tool_call":
+                m["turns"] = max(m["turns"], e["turn"])
+                if e["tool"] not in m["tools"]:
+                    m["tools"].append(e["tool"])
+            elif t in ("answer", "declined", "clarify", "error"):
+                m["outcome"] = t
+            yield e
+    finally:
+        cost = (usage["input_tokens"] * settings.chat_price_in_per_mtok
+                + usage["output_tokens"] * settings.chat_price_out_per_mtok) / 1_000_000
+        metrics_log.info(
+            "chat_metrics outcome=%s decision=%s type=%s tools=%s turns=%d ms=%d in_tokens=%d out_tokens=%d est_cost_usd=%.5f",
+            m["outcome"], m["decision"] or "-", m["type"] or "-", ",".join(m["tools"]) or "-", m["turns"],
+            round((time.perf_counter() - start) * 1000), usage["input_tokens"], usage["output_tokens"], cost,
+        )
+
+
+def _run_chat(
+    model: BaseChatModel,
+    tx: pd.DataFrame,
+    prices: PriceService,
+    message: str,
+    history: list[tuple[str, str]],
+    settings: Settings,
+    usage: dict[str, int],
+) -> Iterator[dict[str, Any]]:
     yield {"type": "received", "chars": len(message)}
     tickers = sorted(set(tx["ticker"]))
     try:
-        scope = check_scope(model, message, history, tickers)
+        scope = check_scope(model, message, history, tickers, usage)
     except Exception as exc:  # noqa: BLE001  API/network failure
         log.warning("Scope check failed: %s", type(exc).__name__)
         yield {"type": "error", "text": ERROR_TEXT}
@@ -122,6 +163,7 @@ def run_chat(
             last = turn > settings.chat_max_tool_turns  # cap reached: one final call with tools switched off
             runner = model.bind_tools(tool_list, tool_choice={"type": "none"}) if last else with_tools
             ai = runner.invoke(msgs)
+            add_usage(usage, ai)
             msgs.append(ai)
             calls = [] if last else list(ai.tool_calls or [])
             if not calls:

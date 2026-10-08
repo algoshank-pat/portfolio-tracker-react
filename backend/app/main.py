@@ -20,6 +20,19 @@ from app.routes import chat, health, performance, portfolio, transactions
 log = logging.getLogger("portfolio_tracker")
 
 
+def _configure_logging() -> None:
+    """Print this app's own log lines (INFO+, e.g. chat_metrics) to stdout, where Render shows them.
+
+    Uvicorn configures only its own loggers; without this, INFO lines from the app would be dropped.
+    """
+    if not any(getattr(h, "_portfolio_tracker", False) for h in log.handlers):
+        handler = logging.StreamHandler()
+        handler.setFormatter(logging.Formatter("%(levelname)s:     %(message)s"))
+        handler._portfolio_tracker = True  # type: ignore[attr-defined]
+        log.addHandler(handler)
+    log.setLevel(logging.INFO)
+
+
 def _readable(err: dict) -> str:
     where = ".".join(str(p) for p in err.get("loc", ()) if p != "body")
     return f"{where}: {err.get('msg', 'invalid value')}" if where else err.get("msg", "Invalid request.")
@@ -31,6 +44,7 @@ def create_app(
     chat_model_factory: Callable | None = None,
 ) -> FastAPI:
     settings = settings or Settings()
+    _configure_logging()
     app = FastAPI(title="Portfolio Tracker API", version="0.1.0", docs_url="/docs", redoc_url=None)
     app.state.settings = settings
     app.state.prices = prices or PriceService(settings)

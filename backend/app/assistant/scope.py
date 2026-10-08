@@ -71,12 +71,31 @@ def _messages(message: str, history: list[tuple[str, str]], tickers: list[str]) 
     return msgs
 
 
+def add_usage(usage: dict[str, int] | None, message: object) -> None:
+    """Add a model reply's token counts (LangChain usage_metadata) to a running total. Counts only."""
+    meta = getattr(message, "usage_metadata", None) or {}
+    if usage is not None:
+        usage["input_tokens"] = usage.get("input_tokens", 0) + int(meta.get("input_tokens") or 0)
+        usage["output_tokens"] = usage.get("output_tokens", 0) + int(meta.get("output_tokens") or 0)
+
+
 def check_scope(
-    model: BaseChatModel, message: str, history: list[tuple[str, str]], tickers: list[str]
+    model: BaseChatModel,
+    message: str,
+    history: list[tuple[str, str]],
+    tickers: list[str],
+    usage: dict[str, int] | None = None,
 ) -> ScopeResult:
-    structured = model.with_structured_output(ScopeResult, method="json_schema")
+    """Classify the question. `usage`, if given, receives this call's token counts (for monitoring)."""
+    structured = model.with_structured_output(ScopeResult, method="json_schema", include_raw=True)
     try:
-        result = structured.invoke(_messages(message, history, tickers))
+        out = structured.invoke(_messages(message, history, tickers))
+        result = out
+        if isinstance(out, dict) and "raw" in out:  # include_raw: {"raw", "parsed", "parsing_error"}
+            add_usage(usage, out.get("raw"))
+            if out.get("parsing_error") is not None:
+                raise ValueError("unparseable scope result")
+            result = out.get("parsed")
         if isinstance(result, dict):
             result = ScopeResult.model_validate(result)
         if not isinstance(result, ScopeResult):

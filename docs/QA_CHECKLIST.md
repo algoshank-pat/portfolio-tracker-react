@@ -5,7 +5,7 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 
 ## Automated
 
-- [ ] `cd backend; uv run pytest` passes (125 tests, no network, no API key: prices and the LLM are faked).
+- [ ] `cd backend; uv run pytest` passes (129 tests, no network, no API key: prices and the LLM are faked).
 - [ ] Vulnerability checks: `npm audit` in `frontend/` and the OSV check on `uv export` (README) report 0 known issues.
 - [ ] `cd frontend; npm run build` passes with no TypeScript errors.
 

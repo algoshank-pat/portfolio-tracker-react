@@ -41,6 +41,9 @@ class FakeChat(BaseChatModel):
             nxt = self.structured.pop(0)
             if isinstance(nxt, Exception):
                 raise nxt
+            if kwargs.get("include_raw"):  # LangChain shape: raw message (with token usage) + parsed value
+                raw = AIMessage(content="", usage_metadata={"input_tokens": 400, "output_tokens": 30, "total_tokens": 430})
+                return {"raw": raw, "parsed": nxt, "parsing_error": None}
             return nxt
 
         return RunnableLambda(run)

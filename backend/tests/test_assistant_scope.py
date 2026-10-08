@@ -24,7 +24,7 @@ def run(reply, message="What is my XIRR?", history=None):
 def test_in_scope():
     r, m = run({"decision": "in_scope", "reason": "Asks for this portfolio's XIRR.", "question_type": "xirr"})
     assert r.decision == "in_scope" and r.question_type == "xirr"
-    assert m.structured_kwargs == [{"method": "json_schema"}]  # native structured output
+    assert m.structured_kwargs == [{"method": "json_schema", "include_raw": True}]  # native structured output + usage
 
 
 @pytest.mark.parametrize(

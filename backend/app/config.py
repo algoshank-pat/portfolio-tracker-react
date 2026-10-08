@@ -15,6 +15,13 @@ def _int(name: str, default: int) -> int:
         return default
 
 
+def _float(name: str, default: float) -> float:
+    try:
+        return float(os.environ.get(name, default))
+    except ValueError:
+        return default
+
+
 def _origins() -> list[str]:
     raw = os.environ.get("CORS_ORIGINS", "http://localhost:5173,http://127.0.0.1:5173")
     return [o.strip().rstrip("/") for o in raw.split(",") if o.strip()]
@@ -43,3 +50,6 @@ class Settings:
     chat_max_tool_turns: int = field(default_factory=lambda: _int("CHAT_MAX_TOOL_TURNS", 4))
     chat_max_history: int = field(default_factory=lambda: _int("CHAT_MAX_HISTORY", 10))
     chat_timeout_s: int = field(default_factory=lambda: _int("CHAT_TIMEOUT_S", 30))
+    # List prices for the cost estimate in the metrics log line (USD per million tokens; Haiku 5.5 defaults).
+    chat_price_in_per_mtok: float = field(default_factory=lambda: _float("CHAT_PRICE_IN_PER_MTOK", 0.10))
+    chat_price_out_per_mtok: float = field(default_factory=lambda: _float("CHAT_PRICE_OUT_PER_MTOK", 0.50))

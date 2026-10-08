@@ -63,11 +63,30 @@ The assistant needs `ANTHROPIC_API_KEY` in the backend's environment (set it in 
 ## Checks
 
 ```powershell
-cd backend;  uv run pytest            # 125 tests, offline (prices and the LLM are faked)
+cd backend;  uv run pytest            # 129 tests, offline (prices and the LLM are faked)
 cd frontend; npm run build            # TypeScript check + production build
 ```
 
 Manual checks before a release: [docs/QA_CHECKLIST.md](docs/QA_CHECKLIST.md).
+
+## Monitoring the assistant
+
+Each assistant question writes one line to the backend log (Render → your service → **Logs**, search `chat_metrics`):
+
+```text
+chat_metrics outcome=answer decision=in_scope type=xirr tools=get_xirr turns=1 ms=2310 in_tokens=1850 out_tokens=210 est_cost_usd=0.00029
+```
+
+| Field | Meaning |
+| --- | --- |
+| `outcome` | `answer`, `declined`, `clarify`, `error` (or `aborted` if the visitor left mid-answer) |
+| `decision`, `type` | The scope check's verdict and question type |
+| `tools`, `turns` | Tool names used and how many tool-call turns (max 4) |
+| `ms` | Time from question to answer |
+| `in_tokens`, `out_tokens` | Tokens across the scope check and every model call |
+| `est_cost_usd` | Estimate from list prices (`CHAT_PRICE_IN_PER_MTOK`, `CHAT_PRICE_OUT_PER_MTOK`; Haiku 5.5 defaults). The Anthropic Console's Usage page has the billed amount |
+
+The line never contains the question, the answer, tickers or amounts. LangSmith tracing stays off.
 
 ## Refreshing the price snapshot
 
