@@ -78,7 +78,7 @@ export function InputTab({ onGo }: { onGo: (tab: string) => void }) {
           <TableSkeleton />
         ) : (
           <EmptyState icon="upload" title="No transactions yet">
-            Tick “Use the sample portfolio”, upload a CSV, or add a trade with the form above.
+            Tick “Use the sample portfolio”, upload a CSV, or add a trade with the form above. Your transactions are saved in this browser only, never on our server.
           </EmptyState>
         )}
       </Card>
@@ -114,6 +114,7 @@ function SampleToggle({
         </label>
         <p id={`${id}-desc`} className={s.sampleDesc}>
           Seven made-up trades in AAPL, MSFT and VTI from 2024 to 2025.{" "}
+          {!checked && "Ticking this clears your transactions saved in this browser. "}
           <a href={SAMPLE_URL} download="sample_transactions.csv" className={s.download}>
             <Icon name="download" className={s.inlineIcon} />
             Download the sample CSV

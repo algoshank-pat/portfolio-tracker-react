@@ -6,7 +6,7 @@ import { Button, Icon } from "./ui";
 import s from "./DataSource.module.css";
 
 export function DataSource({ onGo }: { onGo: (tab: string) => void }) {
-  const { transactions, useSample, input, uploadCsv, setUseSample } = usePortfolio();
+  const { transactions, useSample, input, uploadCsv, clearMyData, restored } = usePortfolio();
   const fileRef = useRef<HTMLInputElement>(null);
   const id = useId();
   const loading = input.kind === "loading";
@@ -37,8 +37,8 @@ export function DataSource({ onGo }: { onGo: (tab: string) => void }) {
             </>
           ) : transactions.length ? (
             <>
-              {transactions.length} trades · {tickerList}
-              {useSample && " · made up"}
+              {transactions.length} {transactions.length === 1 ? "trade" : "trades"} · {tickerList}
+              {useSample ? " · made up" : restored ? " · restored from this browser" : " · saved in this browser"}
             </>
           ) : (
             "No transactions loaded"
@@ -67,8 +67,8 @@ export function DataSource({ onGo }: { onGo: (tab: string) => void }) {
               or enter trades by hand
             </Button>
           ) : (
-            <Button variant="ghost" size="small" onClick={() => setUseSample(true)} disabled={loading}>
-              Back to the sample
+            <Button variant="ghost" size="small" onClick={clearMyData} disabled={loading}>
+              Clear my data
             </Button>
           )}
         </div>
@@ -82,7 +82,7 @@ export function DataSource({ onGo }: { onGo: (tab: string) => void }) {
 
       <p className={s.notice}>
         <Icon name="info" className={s.noticeIcon} />
-        Use sample or made-up data. Nothing is saved.
+        Your transactions are saved in this browser only, never on our server.
       </p>
     </aside>
   );
