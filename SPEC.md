@@ -21,13 +21,14 @@ The course demo used Streamlit + uv + yfinance. This version deliberately uses *
 | Tab 1 | Manual entry form + CSV upload + a **checkbox "Use the sample portfolio"** (pre-checked; when checked it loads the bundled sample and greys out the upload box). Sample goes through the same validation path. "Download sample CSV" link. |
 | Tab 4 | Shows the architecture picture (static SVG/PNG, with zoom and caption) plus short written explanations of each component and the request flow. |
 | Look and feel | **Beautiful and stunning, clean light editorial** (see section 6). |
-| Public safety | Upload cap about 2 MB and 5,000 rows, max about 25 tickers per request, per-IP rate limit, request timeouts, no persistence, never log request bodies, CORS allow-list limited to the frontend origin, visible notice "Use sample or made-up data. Nothing is saved." |
+| Public safety | Upload cap about 2 MB and 5,000 rows, max about 25 tickers per request, per-IP rate limit, request timeouts, no persistence, never log request bodies, CORS allow-list limited to the frontend origin, visible notice "Use sample or made-up data. Nothing is saved." (Notice and storage changed 2026-10-07: see A11.) |
 | Resilience | Friendly "Waking the server" loading state for the cold start. A clearly labelled **price snapshot fallback** if Yahoo fails ("Prices as of <date>, live feed unavailable"). Never present synthetic or snapshot data as live. |
 | Expected load | About 350 users over a week: light. The slow part is Yahoo, so cache per ticker, share concurrent fetches of the same ticker, and remember bad tickers briefly. Run one worker process (512 MB RAM). |
 
 ### Named dependencies
 
 Backend: FastAPI, uvicorn, pandas, yfinance, pytest, httpx (numpy comes with pandas and is used by the demo price provider).
+Added 2026-10-07 for the assistant (section 11): `langchain-core`, `langchain-anthropic`.
 Frontend: React, Vite, TypeScript, Recharts.
 Anything else needs approval first (AGENTS.md rule 7).
 
@@ -129,7 +130,7 @@ K9 was chosen explicitly. The others are the recommended defaults, accepted when
 | K6 | Sample CSV copies | One copy in `backend/data/`, one in `frontend/public/`; a backend test fails if they differ. |
 | K7 | Trend size | Return daily points; add downsampling only if it proves slow. |
 | K8 | Dates | "As of" and the XIRR end date use the date of the last price used, not the server clock (Render runs on UTC). |
-| K9 | Browser storage | Transactions are held in React state only and cleared on refresh. No localStorage. "Nothing is saved" is literally true. |
+| K9 | Browser storage | ~~Transactions are held in React state only and cleared on refresh. No localStorage.~~ **Superseded 2026-10-07 by A11:** transactions are saved in this browser's localStorage; the server still stores nothing. |
 | K10 | NaN | Missing numeric values are sent as JSON `null`, never NaN. |
 | K11 | Price fetching | The cache is per ticker, so step 3 adds a per-ticker fetch layer (`yf.Ticker(...).history`, unadjusted) instead of the batch `yf.download`, which is not safe to call concurrently. |
 | K12 | Price sources (step 3) | `price_source` is `live` or `snapshot` in production. If any ticker falls back to the snapshot, the whole response is labelled `snapshot` and the note names the tickers. `demo` (synthetic, labelled) exists only when `PRICE_SOURCE=demo` for offline testing. After a Yahoo error or timeout, live calls pause for 60 s (circuit breaker). |
@@ -161,7 +162,7 @@ The original files in `Week1` stay untouched; the copies in `docs/` get these ed
 | --- | --- | --- |
 | D1 | Hosting zone | Header "HOSTING · CLOUDFLARE PAGES + RENDER". Frontend: Cloudflare Pages (free), `*.pages.dev`. Backend: Render free, sleeps after 15 min idle, about 1 min to wake. Wiring box keeps the env var and CORS lines. |
 | D2 | Input box | "☑ Use the sample portfolio (default)" / "CSV upload (drag and drop)" / "Manual entry form · Download sample CSV". |
-| D3 | Browser state | "Held in React state only · cleared on refresh" / "No account, no database, nothing saved". |
+| D3 | Browser state | "Held in React state only · cleared on refresh" / "No account, no database, nothing saved". Changed 2026-10-07 (A11) to "Saved in this browser only (localStorage)" / "\"Clear my data\" removes it · nothing on our server"; the diagram also gained the assistant boxes and an Anthropic zone. |
 | D4 | Prices | Two boxes. **Price cache**: per-ticker TTL, shared in-flight fetch, bad-ticker memory. **Prices + snapshot fallback**: live yfinance, else `price_snapshot.json` labelled "Prices as of <date>". |
 | D5 | FastAPI box | Add "Limits: 2 MB · 5,000 rows · 25 tickers · rate limit · timeouts · no body logging". |
 | D6 | Views box | Add "'Waking the server' screen · snapshot-prices banner"; "pie" becomes "donut". |
@@ -180,7 +181,7 @@ Status: D1–D10 applied to `docs/architecture.svg` and `docs/architecture.drawi
 | F2 | Upload | A CSV upload replaces the current list; manual rows append. Files over 2 MB are rejected in the browser before sending. |
 | F3 | Cold start | `/health` is pinged on page load. If a request takes over 2.5 s, or the server is unreachable or returns 502/503/504, the "Waking the server" bar shows and requests retry for about a minute (timeout 100 s each). |
 | F4 | Results | Portfolio and performance are both requested whenever the transactions change, so switching tabs is instant. |
-| F6 | Landing page (2026-10-04, Shashank) | Dashboards first. Tab order is now 1 Current Portfolio, 2 Historical Performance, 3 Input Transactions, 4 Architecture, and the app opens on Current Portfolio with the sample loaded. A top-right header card says "Now showing: A sample portfolio" and offers "Upload your CSV" (straight to the dashboard on success, to the Input tab on errors), "or enter trades by hand", the template download, and the "Use sample or made-up data. Nothing is saved." notice. Headline is one line: "Every trade, one clear picture." |
+| F6 | Landing page (2026-10-04, Shashank) | Dashboards first. Tab order is now 1 Current Portfolio, 2 Historical Performance, 3 Input Transactions, 4 Architecture, and the app opens on Current Portfolio with the sample loaded. A top-right header card says "Now showing: A sample portfolio" and offers "Upload your CSV" (straight to the dashboard on success, to the Input tab on errors), "or enter trades by hand", the template download, and the "Use sample or made-up data. Nothing is saved." notice (now "Your transactions are saved in this browser only, never on our server.", A11). Headline is one line: "Every trade, one clear picture." |
 | F5 | Derived display values | Cost basis (avg cost × quantity), total unrealized P/L and the chart tooltip's total return (value − net invested) are sums or rearrangements of the spec formulas, not new metrics. |
 
 ## 9. Risks and open questions
@@ -197,3 +198,23 @@ Status: D1–D10 applied to `docs/architecture.svg` and `docs/architecture.drawi
 The handout drops Tue Oct 6, 2026. Record any submission format or extra requirements here, and update this spec before step 9.
 
 _None yet._
+
+## 11. "Ask your portfolio" assistant (decided 2026-10-07)
+
+A chat assistant that answers questions about the loaded portfolio only (the sample or the user's upload). It explains; it never recommends buying or selling.
+
+| # | Topic | Decision |
+| --- | --- | --- |
+| A1 | Placement | A pop-up assistant: a round "Ask" button bottom-right on every tab once a portfolio is loaded. Desktop: a floating panel about 720 px wide, chat left, activity steps right. Phone: a full-screen sheet, chat first, with an "Activity" toggle. Closes with ✕ or Esc; focus is trapped while open. |
+| A2 | Model | Claude Haiku 5.5 (`claude-haiku-5-5`) through LangChain (`langchain-core` + `langchain-anthropic`). Chosen for cost (estimated $0.002–0.004 per question, to be measured) and so GPT or Llama can be swapped in later. |
+| A3 | Provider switch | One factory builds the chat model from settings: `LLM_PROVIDER` (default `anthropic`) and `CHAT_MODEL` (default `claude-haiku-5-5`). Everything else is provider-neutral LangChain code. Another provider = its LangChain package + these two settings. |
+| A4 | Scope check | Every message first goes through one LLM call with structured output: `decision` (`in_scope` \| `out_of_scope` \| `unclear`), a one-line `reason`, and a `question_type`. Out of scope (general knowledge, "should I buy X", tickers not in the portfolio) → a polite decline saying it only covers the loaded portfolio; no tools run. Unclear → one clarifying question; no tools run. |
+| A5 | Tools (all math) | The model never does arithmetic. Five tools wrap the existing tested code: `get_holdings` (holdings + current value, as `/api/portfolio`), `get_performance` (summary as `/api/performance`), `get_xirr`, `get_price_status` (price source, note, as-of date, missing prices) and `what_if`. Every answer names the tools it used. If prices came from the stored snapshot, the answer says so. |
+| A6 | `what_if` | One hypothetical BUY or SELL of a ticker that already appears in the transactions: `side`, `ticker`, `quantity` (> 0), `price` (default: that ticker's latest price), `fees` (default 0), dated at the as-of date. It is appended to the transactions, re-validated by the same code (an oversell is rejected) and recomputed by the same engine. Returns before/after: current value, total invested, total sold, total return ($ and %), XIRR, and that ticker's quantity, avg cost and weight. Nothing is saved. |
+| A7 | Activity panel | Streams one line per step as it happens: question received → context check result → each tool call with its arguments → tool result summary → answer with tools used. A declined question stops after the check with "Declined: not about this portfolio". |
+| A8 | API | `POST /api/chat` with `{transactions, message, history}` → a streamed `application/x-ndjson` response, one JSON event per line (`received`, `scope`, `tool_call`, `tool_result`, `answer`, `declined`, `clarify`, `error`). Stateless: the browser sends the transactions and recent history with every question. No API key set → the chat replies "The assistant is unavailable right now" and the rest of the app is unaffected. |
+| A9 | Limits | Existing upload limits (2 MB, 5,000 rows, 25 tickers) and 60 requests a minute per IP apply to `/api/chat` too. New: a message is at most 500 characters; at most 4 tool-call turns per question; at most the last 10 history messages are sent, each capped at 500 characters. No app-side daily cap: cost is bounded by a monthly spend limit on a dedicated Anthropic Console workspace that owns the key. |
+| A10 | Security | The key lives only in the server environment variable `ANTHROPIC_API_KEY`, never in the browser, a response, an error or a log. Text from the CSV and from tool results is passed to the model as data inside clearly marked blocks, never as instructions (CSV fields are already restricted to dates, ticker symbols, BUY/SELL and numbers). Message text, history and transactions are never logged. LangSmith/LangChain tracing is forced off. CORS stays locked to the site. "Not investment advice" is shown in the panel and stated in the system prompt. |
+| A11 | Browser storage | Uploaded or hand-entered transactions are saved in this browser's localStorage and reloaded (and re-validated) on refresh or a return visit. Nothing saved → the made-up sample. A "Clear my data" button removes them and returns to the sample. The notice "Use sample or made-up data. Nothing is saved." becomes "Your transactions are saved in this browser only, never on our server." README, the Architecture tab, the diagram and the build prompt are updated to match. |
+| A12 | Chat history | Kept in the open browser tab only; cleared on refresh. Never stored on the server or in localStorage. |
+| A13 | Tests | Backend tests use LangChain's fake chat model (no key, no network): scope in / out / unclear, each tool, `what_if`, the turn cap, the message cap, prompt-injection text in a CSV, no key leak, snapshot labelling, tracing off. Plus the existing 58 tests and the dependency vulnerability checks. |

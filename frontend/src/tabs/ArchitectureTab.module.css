@@ -94,6 +94,10 @@
   background: #b8860b;
 }
 
+.part[data-tone="assistant"]::before {
+  background: #b5485d;
+}
+
 .part[data-tone="hosting"]::before {
   background: #5e35b1;
 }

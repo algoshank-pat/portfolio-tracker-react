@@ -10,7 +10,12 @@ const PARTS = [
   {
     name: "Browser",
     tone: "browser",
-    body: "A React app (Vite + TypeScript). It holds your transactions in memory only, so a refresh clears them. It draws the charts with Recharts and shows a friendly notice while the free server wakes up.",
+    body: "A React app (Vite + TypeScript). Your transactions are saved in this browser only (localStorage) so a refresh or a return visit brings them back; “Clear my data” removes them. It draws the charts with Recharts and shows a friendly notice while the free server wakes up.",
+  },
+  {
+    name: "Assistant",
+    tone: "assistant",
+    body: "“Ask your portfolio” uses Claude Haiku 5.5 through LangChain. A scope check declines anything not about this portfolio. The model never does arithmetic: five tools wrap the same tested code as the dashboards, and every step streams into the Activity panel. The API key lives only on the server, and chat history only in your open tab.",
   },
   {
     name: "Backend",
@@ -31,10 +36,11 @@ const PARTS = [
 
 const FLOW = [
   ["Choose data", "Tick the sample, upload a CSV or add a row in the Input tab."],
-  ["Validate", "The browser sends it to /api/transactions/validate. Clean rows come back and stay in browser memory."],
+  ["Validate", "The browser sends it to /api/transactions/validate. Clean rows come back and are saved in this browser."],
   ["Ask for results", "The Portfolio and Performance tabs send those rows to /api/portfolio and /api/performance."],
   ["Compute", "The backend re-checks the rows, gets prices (cache, then Yahoo, then the snapshot) and computes holdings, XIRR and the trend."],
   ["Render", "JSON comes back and React draws the donut, tables, metric cards and chart."],
+  ["Ask (optional)", "A question goes to /api/chat with the rows. A scope check runs first; then tools compute every number, and each step streams back to the Activity panel."],
 ] as const;
 
 export function ArchitectureTab() {
@@ -46,7 +52,7 @@ export function ArchitectureTab() {
             src="/architecture.svg"
             alt="Architecture diagram: browser, backend, Yahoo Finance and hosting"
             width={1300}
-            height={920}
+            height={1060}
           />
           <figcaption className={s.caption}>
             The browser sends its transactions with each request; the server computes the results and stores nothing.{" "}
@@ -71,7 +77,7 @@ export function ArchitectureTab() {
       <div className={s.columns}>
         <section aria-labelledby="parts-h" className={s.parts}>
           <h2 id="parts-h" className={s.sectionTitle}>
-            The four parts
+            The five parts
           </h2>
           {PARTS.map((p) => (
             <article key={p.name} className={s.part} data-tone={p.tone}>
@@ -99,8 +105,9 @@ export function ArchitectureTab() {
             ))}
           </ol>
           <p className={s.note}>
-            Why stateless? Nothing to secure, back up or leak: close the tab and your data is gone. The trade-off is that
-            every request resends the transactions, which is fine at this size (up to 5,000 rows).
+            Why a stateless server? Nothing to secure, back up or leak on our side: your transactions live only in your
+            own browser, and “Clear my data” removes them. The trade-off is that every request resends the transactions,
+            which is fine at this size (up to 5,000 rows).
           </p>
         </section>
       </div>

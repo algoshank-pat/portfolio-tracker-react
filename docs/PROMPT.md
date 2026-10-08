@@ -9,7 +9,7 @@ STACK
 - Frontend: React + Vite + TypeScript, charts with Recharts. Host on Cloudflare Pages.
 - Backend: Python FastAPI managed with uv. Host on Render's free tier.
 - Prices: yfinance (Yahoo Finance), unadjusted daily closes.
-- Stateless: the browser keeps transactions in memory and sends them with every request. The server stores nothing, has no database and never logs request bodies.
+- Stateless server: the browser saves your transactions in localStorage (this browser only) and sends them with every request. The server stores nothing, has no database and never logs request bodies. A "Clear my data" button removes them and shows the sample again.
 
 DATA
 - CSV columns: trade_date,ticker,side,quantity,price,fees (fees optional, dates YYYY-MM-DD).
@@ -34,7 +34,7 @@ SCREENS (dashboards first)
 
 PUBLIC SAFETY
 - Caps: about 2 MB, 5,000 rows and 25 tickers per request. Per-IP rate limit, request timeouts, CORS allow-list from an env var.
-- Visible notice: "Use sample or made-up data. Nothing is saved." Only made-up sample data in the repo, no secrets.
+- Visible notice: "Your transactions are saved in this browser only, never on our server." Only made-up sample data in the repo, no secrets.
 
 RESILIENCE
 - Cache prices per ticker, share concurrent fetches of the same ticker, briefly remember bad tickers.
@@ -44,7 +44,15 @@ RESILIENCE
 DESIGN
 Clean, light, editorial and beautiful: warm white background, one ink-blue accent, serif headings and big numbers, clean sans body, self-hosted fonts, tabular numerals. Restrained motion that respects reduced-motion. Design every screen in its empty, loading, error and populated states. Responsive from 360 px phones to wide desktops, keyboard accessible, WCAG AA contrast.
 
+ASSISTANT ("Ask your portfolio")
+- A pop-up assistant (an "Ask" button bottom-right) that answers questions about the loaded portfolio only. Claude Haiku 5.5 through LangChain, so another provider can be swapped in via settings.
+- Every message first goes through a scope check that returns JSON: in_scope / out_of_scope / unclear, a one-line reason and a question type. General knowledge, buy/sell advice and tickers not in the portfolio get a polite decline and no tools run; unclear gets one clarifying question.
+- The model never does arithmetic: tools wrap the tested code (get_holdings, get_performance, get_xirr, get_price_status, what_if for one hypothetical buy or sell). Every answer names the tools used and says so when prices are a stored snapshot.
+- An Activity panel beside the chat shows each step as it streams: question received, context check, each tool call with arguments, result summary, answer with tools used.
+- Limits: 500-character messages, at most 4 tool-call turns, the last 10 messages as context; chat history lives in the open tab only.
+- Security: the API key is a server environment variable only; CSV text is data, never instructions; message bodies and transactions are never logged; tracing is off; it explains and never recommends buying or selling.
+
 QUALITY AND PROCESS
-- Backend tests with pytest using fake prices (no network). The frontend must type-check and build.
+- Backend tests with pytest using fake prices and a fake LLM (no network, no key): scope in/out, each tool, the turn cap, prompt injection in a CSV, no key leak. The frontend must type-check and build.
 - Ask before adding any dependency. Never commit, push or deploy unless I say so for that specific action.
 ```

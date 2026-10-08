@@ -1,21 +1,22 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 920" width="1300" height="920" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1300 1060" width="1300" height="1060" font-family="-apple-system, 'Segoe UI', Helvetica, Arial, sans-serif">
 <title>Portfolio Tracker: React + FastAPI architecture</title>
-<desc>Browser (React) sends transactions over HTTPS and JSON to a stateless FastAPI backend, which validates them, computes holdings, totals, XIRR and value history, and gets prices from a cache, then Yahoo Finance, then a stored snapshot. Frontend on Cloudflare Pages, backend on Render.</desc>
+<desc>Browser (React, transactions saved in localStorage) sends transactions over HTTPS and JSON to a stateless FastAPI backend, which validates them, computes holdings, totals, XIRR and value history, and gets prices from a cache, then Yahoo Finance, then a stored snapshot. An assistant answers questions about the portfolio via a scope check and tools that reuse the same engine, calling Claude Haiku 5.5 on Anthropic. Frontend on Cloudflare Pages, backend on Render.</desc>
 <defs>
 <filter id="sh" x="-5%" y="-5%" width="110%" height="120%"><feDropShadow dx="0" dy="2" stdDeviation="3" flood-color="#1B1B1F" flood-opacity="0.10"/></filter>
 <marker id="ah" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#444"/></marker>
 <marker id="ahb" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B8860B"/></marker>
 <marker id="ahp" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#5E35B1"/></marker>
+<marker id="ahr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#B5485D"/></marker>
 <marker id="ahu" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse"><path d="M0,0 L10,5 L0,10 z" fill="#3D5AFE"/></marker>
 </defs>
-<rect width="1300" height="920" fill="#FBFAF7"/>
+<rect width="1300" height="1060" fill="#FBFAF7"/>
 <text x="30" y="42" font-family="Georgia, 'Times New Roman', serif" font-size="26" fill="#1B1B1F">Portfolio Tracker: React + FastAPI architecture</text>
-<text x="30" y="66" font-size="13" fill="#5F6368">React frontend, stateless FastAPI backend, prices from Yahoo Finance. The browser sends its transactions with each request; the server stores nothing.</text>
+<text x="30" y="66" font-size="13" fill="#5F6368">React frontend, stateless FastAPI backend, prices from Yahoo Finance, an assistant on Claude Haiku 5.5. Transactions stay in your browser; the server stores nothing.</text>
 
 <!-- Zones -->
-<rect x="20" y="90" width="380" height="722" rx="16" fill="#EEF3FF" stroke="#3D5AFE" stroke-opacity="0.45" stroke-width="1.5"/>
+<rect x="20" y="90" width="380" height="840" rx="16" fill="#EEF3FF" stroke="#3D5AFE" stroke-opacity="0.45" stroke-width="1.5"/>
 <text x="38" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#3D5AFE">BROWSER  ·  REACT + VITE + TYPESCRIPT</text>
-<rect x="500" y="90" width="420" height="722" rx="16" fill="#EAF6EE" stroke="#2E7D32" stroke-opacity="0.45" stroke-width="1.5"/>
+<rect x="500" y="90" width="420" height="840" rx="16" fill="#EAF6EE" stroke="#2E7D32" stroke-opacity="0.45" stroke-width="1.5"/>
 <text x="518" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#2E7D32">BACKEND  ·  PYTHON + FASTAPI</text>
 <rect x="1020" y="90" width="260" height="200" rx="16" fill="#FFF5DD" stroke="#B8860B" stroke-opacity="0.45" stroke-width="1.5"/>
 <text x="1038" y="118" font-size="12" font-weight="700" letter-spacing="1.4" fill="#B8860B">EXTERNAL</text>
@@ -39,8 +40,8 @@
 
 <g filter="url(#sh)"><rect x="40" y="390" width="340" height="85" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="398" width="4" height="69" rx="2" fill="#3D5AFE"/></g>
 <text x="58" y="414" font-size="13.5" font-weight="700" fill="#1B1B1F">Browser state</text>
-<text x="58" y="433" font-size="12" fill="#5F6368">Held in React state only · cleared on refresh</text>
-<text x="58" y="452" font-size="12" fill="#5F6368">No account, no database, nothing saved</text>
+<text x="58" y="433" font-size="12" fill="#5F6368">Saved in this browser only (localStorage)</text>
+<text x="58" y="452" font-size="12" fill="#5F6368">"Clear my data" removes it · nothing on our server</text>
 
 <g filter="url(#sh)"><rect x="40" y="499" width="340" height="85" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="507" width="4" height="69" rx="2" fill="#3D5AFE"/></g>
 <text x="58" y="523" font-size="13.5" font-weight="700" fill="#1B1B1F">API client</text>
@@ -153,19 +154,49 @@
 <text x="1058" y="601" font-size="12" fill="#5F6368">Sleeps after 15 min idle,</text>
 <text x="1058" y="620" font-size="12" fill="#5F6368">about 1 min to wake</text>
 
-<g filter="url(#sh)"><rect x="1040" y="662" width="220" height="100" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="670" width="4" height="84" rx="2" fill="#5E35B1"/></g>
+<g filter="url(#sh)"><rect x="1040" y="662" width="220" height="118" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="670" width="4" height="102" rx="2" fill="#5E35B1"/></g>
 <text x="1058" y="686" font-size="13.5" font-weight="700" fill="#1B1B1F">Wiring</text>
 <text x="1058" y="705" font-size="12" fill="#5F6368">Frontend reads VITE_API_URL</text>
 <text x="1058" y="724" font-size="12" fill="#5F6368">Backend CORS allows the</text>
 <text x="1058" y="743" font-size="12" fill="#5F6368">frontend origin only</text>
+<text x="1058" y="762" font-size="12" fill="#5F6368">API key: Render env var only</text>
 
 <path d="M1150,490 V520" fill="none" stroke="#5E35B1" stroke-width="2" stroke-linejoin="round" stroke-dasharray="6 5" marker-end="url(#ahp)"/>
 <rect x="1160.1" y="494" width="69.8" height="22" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
 <text x="1195" y="508" font-size="11" text-anchor="middle" fill="#5E35B1">calls API</text>
 
+
+<!-- Assistant (added 2026-10-07) -->
+<g filter="url(#sh)"><rect x="40" y="754" width="340" height="66" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="40" y="762" width="4" height="50" rx="2" fill="#B5485D"/></g>
+<text x="58" y="778" font-size="13.5" font-weight="700" fill="#1B1B1F">Ask your portfolio <tspan font-size="11" font-weight="400" fill="#80868B">· pop-up</tspan></text>
+<text x="58" y="797" font-size="12" fill="#5F6368">Chat + live Activity panel · history in this tab only</text>
+
+<g filter="url(#sh)"><rect x="520" y="820" width="380" height="96" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="520" y="828" width="4" height="80" rx="2" fill="#B5485D"/></g>
+<text x="538" y="844" font-size="13.5" font-weight="700" fill="#1B1B1F">Assistant <tspan font-size="11" font-weight="400" fill="#80868B">· app/assistant/, POST /api/chat</tspan></text>
+<text x="538" y="863" font-size="12" fill="#5F6368">Scope check (structured output), then a tool loop</text>
+<text x="538" y="882" font-size="12" fill="#5F6368">≤ 4 turns · 5 tools reuse the same engine</text>
+<text x="538" y="901" font-size="12" fill="#5F6368">Key from server env only · tracing off · no logging</text>
+
+<path d="M710,820 V802" fill="none" stroke="#B5485D" stroke-width="2" stroke-linejoin="round" marker-end="url(#ahr)"/>
+<rect x="722" y="802" width="132" height="18" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="788" y="815" font-size="11" text-anchor="middle" fill="#B5485D">tools reuse the engine</text>
+
+<path d="M380,787 H450 V868 H520" fill="none" stroke="#B5485D" stroke-width="2" stroke-linejoin="round" marker-end="url(#ahr)" marker-start="url(#ahr)"/>
+<rect x="398" y="840" width="104" height="38" rx="6" fill="#FBFAF7" stroke="#E3E1DA"/>
+<text x="450" y="854" font-size="11" text-anchor="middle" fill="#B5485D">question in,</text>
+<text x="450" y="870" font-size="11" text-anchor="middle" fill="#B5485D">steps streamed</text>
+
+<rect x="1020" y="830" width="260" height="100" rx="16" fill="#FBEDF0" stroke="#B5485D" stroke-opacity="0.45" stroke-width="1.5"/>
+<text x="1038" y="854" font-size="11" font-weight="700" letter-spacing="1.2" fill="#B5485D">EXTERNAL  ·  ANTHROPIC</text>
+<g filter="url(#sh)"><rect x="1040" y="864" width="220" height="56" rx="10" fill="#FFFFFF" stroke="#E3E1DA"/><rect x="1040" y="872" width="4" height="40" rx="2" fill="#B5485D"/></g>
+<text x="1058" y="886" font-size="13.5" font-weight="700" fill="#1B1B1F">Claude Haiku 5.5</text>
+<text x="1058" y="905" font-size="12" fill="#5F6368">via LangChain · Anthropic API</text>
+<path d="M900,890 H1040" fill="none" stroke="#B5485D" stroke-width="2" stroke-dasharray="6 5" marker-end="url(#ahr)"/>
+
 <!-- Request flow -->
-<rect x="20" y="830" width="1260" height="72" rx="12" fill="#FFFFFF" stroke="#E3E1DA" filter="url(#sh)"/>
-<text x="40" y="855" font-size="12.5" font-weight="700" fill="#1B1B1F">Request flow</text>
-<text x="40" y="874" font-size="12" fill="#5F6368">1  Pick the sample, upload a CSV or add a row   →   2  POST /validate; clean rows kept in React state   →   3  Tabs POST them to /portfolio and /performance</text>
-<text x="40" y="892" font-size="12" fill="#5F6368">4  Backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend   →   5  JSON back; React renders donut, tables, metrics and chart</text>
+<rect x="20" y="950" width="1260" height="90" rx="12" fill="#FFFFFF" stroke="#E3E1DA" filter="url(#sh)"/>
+<text x="40" y="975" font-size="12.5" font-weight="700" fill="#1B1B1F">Request flow</text>
+<text x="40" y="994" font-size="12" fill="#5F6368">1  Pick the sample, upload a CSV or add a row   →   2  POST /validate; clean rows saved in this browser   →   3  Tabs POST them to /portfolio and /performance</text>
+<text x="40" y="1012" font-size="12" fill="#5F6368">4  Backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend   →   5  JSON back; React renders donut, tables, metrics and chart</text>
+<text x="40" y="1030" font-size="12" fill="#5F6368">6  Ask: POST /api/chat → scope check → tools compute every number → steps and the answer stream to the Activity panel</text>
 </svg>

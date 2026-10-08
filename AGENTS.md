@@ -36,6 +36,26 @@ Product spec: [SPEC.md](SPEC.md). Owner: Shashank (GitHub: algoshank-pat).
 | 9 | Polish and hardening | Done |
 | 10 | Repo and deploy: checklist first, each action on my go | Done 2026-10-05 (see docs/DEPLOY.md) |
 
+### "Ask your portfolio" assistant (SPEC.md section 11)
+
+One step at a time; each starts only on Shashank's "go". Commits, pushes, env vars and deploys each need their own "go".
+
+| Step | Scope | Status |
+| --- | --- | --- |
+| C1 | Spec: SPEC.md section 11, K9 superseded, this table | Done |
+| C2 | Backend setup: `langchain-core` + `langchain-anthropic`, settings, model factory, tracing off, chat off without a key | Done |
+| C3 | Tools: `get_holdings`, `get_performance`, `get_xirr`, `get_price_status`, `what_if` + unit tests | Done |
+| C4 | Scope check (structured output) + tests with the fake model | Done |
+| C5 | `POST /api/chat`: NDJSON activity stream, tool loop, caps, data-not-instructions, no logging | Done |
+| C6 | Backend tests: scope, tools, turn cap, message cap, prompt injection, no key leak, snapshot label, tracing off | Done |
+| C7 | Browser storage: localStorage transactions, "Clear my data", new privacy notice | Done |
+| C8 | Pop-up assistant UI: chat + activity panel, streaming, waking bar, not-advice line | Done |
+| C9 | Docs kept true: README, Architecture tab, diagram, build prompt, QA checklist | Done |
+| C10 | Local verification: all tests, build, npm audit + OSV, local end-to-end | Done |
+| C11 | Shashank sets `ANTHROPIC_API_KEY` on Render (key from the `portfolio-tracker` Console workspace) | Not started |
+| C12 | Deploy: small commits, push, confirm both hosts rebuilt, live chat smoke test | Not started |
+| C13 | Live QA checklist run, honest report | Not started |
+
 ## Run / test commands
 
 Filled in as steps land.
@@ -56,6 +76,11 @@ Environment variables (all optional, defaults in `app/config.py`):
 `MAX_BODY_BYTES`, `MAX_ROWS`, `MAX_TICKERS`, `RATE_LIMIT_PER_MINUTE`, `PRICE_TIMEOUT_S`, `PRICE_TTL_S`, `BAD_TICKER_TTL_S`.
 
 Tests never call Yahoo: they inject `tests/fakes.py`. Do not add tests that need the network.
+
+Assistant settings (from step C2):
+`ANTHROPIC_API_KEY` (secret; set only in Render's Environment tab or your own terminal, never in a file, command or chat),
+`LLM_PROVIDER` (default `anthropic`), `CHAT_MODEL` (default `claude-haiku-5-5`).
+Never set `LANGSMITH_TRACING` or `LANGCHAIN_TRACING_V2`: tracing would send chat text to LangSmith. Chat tests use LangChain's fake chat model; they never need a key.
 
 ### Frontend (from step 4)
 

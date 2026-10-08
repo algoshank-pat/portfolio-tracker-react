@@ -1,18 +1,18 @@
 <?xml version='1.0' encoding='utf-8'?>
 <mxfile host="app.diagrams.net">
   <diagram id="arch1" name="Architecture">
-    <mxGraphModel dx="1400" dy="960" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="920" math="0" shadow="0">
+    <mxGraphModel dx="1400" dy="960" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1300" pageHeight="1060" math="0" shadow="0">
       <root>
         <mxCell id="0" />
         <mxCell id="1" parent="0" />
-        <mxCell id="n2" value="&lt;b&gt;Portfolio Tracker: React + FastAPI architecture&lt;/b&gt;&lt;br&gt;Stateless backend. Browser sends transactions with each request; nothing is stored on the server." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#111111;fontSize=14;" parent="1" vertex="1">
+        <mxCell id="n2" value="&lt;b&gt;Portfolio Tracker: React + FastAPI architecture&lt;/b&gt;&lt;br&gt;Stateless backend, prices from Yahoo Finance, an assistant on Claude Haiku 5.5. Transactions stay in your browser; the server stores nothing." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#FFFFFF;fontColor=#111111;fontSize=14;" parent="1" vertex="1">
           <mxGeometry x="20" y="10" width="1260" height="60" as="geometry" />
         </mxCell>
         <mxCell id="z1" value="&lt;b&gt;BROWSER (React + Vite + TypeScript)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#EAF1FF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
-          <mxGeometry x="20" y="90" width="380" height="722" as="geometry" />
+          <mxGeometry x="20" y="90" width="380" height="840" as="geometry" />
         </mxCell>
         <mxCell id="z2" value="&lt;b&gt;BACKEND (Python + FastAPI)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#E8F6EA;strokeColor=#2E7D32;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
-          <mxGeometry x="500" y="90" width="420" height="722" as="geometry" />
+          <mxGeometry x="500" y="90" width="420" height="840" as="geometry" />
         </mxCell>
         <mxCell id="z3" value="&lt;b&gt;EXTERNAL&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFF6E0;strokeColor=#B8860B;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
           <mxGeometry x="1020" y="90" width="260" height="200" as="geometry" />
@@ -26,7 +26,7 @@
         <mxCell id="n4" value="&lt;b&gt;Input forms&lt;/b&gt;&lt;br&gt;☑ Use the sample portfolio (default)&lt;br&gt;CSV upload (drag and drop)&lt;br&gt;Manual entry form · Download sample CSV" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
           <mxGeometry x="40" y="262" width="340" height="104" as="geometry" />
         </mxCell>
-        <mxCell id="n5" value="&lt;b&gt;Browser state&lt;/b&gt;&lt;br&gt;Held in React state only · cleared on refresh&lt;br&gt;No account, no database, nothing saved" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+        <mxCell id="n5" value="&lt;b&gt;Browser state&lt;/b&gt;&lt;br&gt;Saved in this browser only (localStorage)&lt;br&gt;&quot;Clear my data&quot; removes it · nothing on our server" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
           <mxGeometry x="40" y="390" width="340" height="85" as="geometry" />
         </mxCell>
         <mxCell id="n6" value="&lt;b&gt;API client&lt;/b&gt;&lt;br&gt;fetch + JSON · base URL from VITE_API_URL&lt;br&gt;Retries while a sleeping server wakes" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#3D5AFE;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
@@ -65,8 +65,8 @@
         <mxCell id="n16" value="&lt;b&gt;Backend&lt;/b&gt;&lt;br&gt;Render free web service&lt;br&gt;FastAPI, one worker, 512 MB&lt;br&gt;Sleeps after 15 min idle,&lt;br&gt;about 1 min to wake" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
           <mxGeometry x="1040" y="520" width="220" height="118" as="geometry" />
         </mxCell>
-        <mxCell id="n17" value="&lt;b&gt;Wiring&lt;/b&gt;&lt;br&gt;Frontend reads VITE_API_URL.&lt;br&gt;Backend CORS allows the&lt;br&gt;frontend origin only." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="1040" y="662" width="220" height="100" as="geometry" />
+        <mxCell id="n17" value="&lt;b&gt;Wiring&lt;/b&gt;&lt;br&gt;Frontend reads VITE_API_URL.&lt;br&gt;Backend CORS allows the&lt;br&gt;frontend origin only.&lt;br&gt;API key: Render env var only." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#5E35B1;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="662" width="220" height="118" as="geometry" />
         </mxCell>
         <mxCell id="n18" value="rows / file" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#444444;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n4" target="n5">
           <mxGeometry relative="1" as="geometry" />
@@ -107,8 +107,29 @@
         <mxCell id="n29" value="calls API" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#5E35B1;strokeWidth=2;endArrow=block;dashed=1;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="n15" target="n16">
           <mxGeometry relative="1" as="geometry" />
         </mxCell>
-        <mxCell id="n30" value="Request flow: 1) pick the sample, upload a CSV or add a row  2) POST /validate; clean rows kept in React state  3) tabs POST them to /portfolio and /performance  4) backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend  5) JSON back; React renders donut, tables, metrics and chart." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
-          <mxGeometry x="20" y="830" width="1260" height="72" as="geometry" />
+        <mxCell id="a1" value="&lt;b&gt;Ask your portfolio&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· pop-up&lt;/font&gt;&lt;br&gt;Chat + live Activity panel · history in this tab only" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#B5485D;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="40" y="754" width="340" height="66" as="geometry" />
+        </mxCell>
+        <mxCell id="a2" value="&lt;b&gt;Assistant&lt;/b&gt; &lt;font color=&quot;#80868B&quot; style=&quot;font-size:11px&quot;&gt;· app/assistant/, POST /api/chat&lt;/font&gt;&lt;br&gt;Scope check (structured output), then a tool loop&lt;br&gt;≤ 4 turns · 5 tools reuse the same engine&lt;br&gt;Key from server env only · tracing off · no logging" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#B5485D;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="520" y="820" width="380" height="96" as="geometry" />
+        </mxCell>
+        <mxCell id="z5" value="&lt;b&gt;EXTERNAL (Anthropic)&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FBEDF0;strokeColor=#B5485D;fontColor=#111111;fontSize=13;verticalAlign=top;align=left;spacingLeft=10;spacingTop=6;" parent="1" vertex="1">
+          <mxGeometry x="1020" y="830" width="260" height="100" as="geometry" />
+        </mxCell>
+        <mxCell id="a3" value="&lt;b&gt;Claude Haiku 5.5&lt;/b&gt;&lt;br&gt;via LangChain · Anthropic API" style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#B5485D;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="1040" y="864" width="220" height="56" as="geometry" />
+        </mxCell>
+        <mxCell id="a4" value="question in, steps streamed" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B5485D;strokeWidth=2;endArrow=block;startArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="a1" target="a2">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a5" value="tools reuse the engine" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B5485D;strokeWidth=2;endArrow=block;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="a2" target="n13">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="a6" value="" style="edgeStyle=orthogonalEdgeStyle;rounded=1;html=1;strokeColor=#B5485D;strokeWidth=2;endArrow=block;dashed=1;fontSize=11;labelBackgroundColor=#FFFFFF;" parent="1" edge="1" source="a2" target="a3">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="n30" value="Request flow: 1) pick the sample, upload a CSV or add a row  2) POST /validate; clean rows saved in this browser  3) tabs POST them to /portfolio and /performance  4) backend re-validates, gets prices (cache → Yahoo → snapshot), computes holdings, XIRR and trend  5) JSON back; React renders donut, tables, metrics and chart  6) ask: POST /api/chat → scope check → tools compute every number → steps and the answer stream to the Activity panel." style="rounded=1;whiteSpace=wrap;html=1;arcSize=6;fillColor=#FFFFFF;strokeColor=#888888;fontColor=#111111;fontSize=12;" parent="1" vertex="1">
+          <mxGeometry x="20" y="950" width="1260" height="90" as="geometry" />
         </mxCell>
       </root>
     </mxGraphModel>

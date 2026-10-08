@@ -5,13 +5,15 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 
 ## Automated
 
-- [ ] `cd backend; uv run pytest` passes (57 tests, no network).
+- [ ] `cd backend; uv run pytest` passes (118 tests, no network, no API key: prices and the LLM are faked).
+- [ ] Vulnerability checks: `npm audit` in `frontend/` and the OSV check on `uv export` (README) report 0 known issues.
 - [ ] `cd frontend; npm run build` passes with no TypeScript errors.
 
 ## Header and Input Transactions (tab 3)
 
 - [ ] First visit opens on Current Portfolio with the sample; header card says "Now showing: A sample portfolio" and the headline is on one line (desktop and 360 px).
-- [ ] Header "Upload your CSV" with a good file: dashboard updates and the card says "Your transactions"; with a bad file: jumps to Input Transactions with the errors. "Back to the sample" restores it.
+- [ ] Header card notice reads "Your transactions are saved in this browser only, never on our server."
+- [ ] Header "Upload your CSV" with a good file: dashboard updates and the card says "Your transactions … saved in this browser"; with a bad file: jumps to Input Transactions with the errors.
 - [ ] Input tab: "Use the sample portfolio" is ticked, 7 trades / 3 tickers appear, upload box and form are greyed out.
 - [ ] "Download the sample CSV" downloads `sample_transactions.csv`.
 - [ ] Untick the sample: list clears, upload and form become active, empty state shows.
@@ -21,7 +23,14 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 - [ ] Add a BUY by hand: it appears in the table in date order.
 - [ ] Add a SELL larger than held: "That transaction wasn't added: … only N held."
 - [ ] "Clear all" empties the list (only shown when the sample is unticked).
-- [ ] Refresh the page: everything resets to the sample (nothing is saved).
+## Browser storage (your data stays in this browser)
+
+- [ ] Upload a CSV (e.g. `samples/long_term_investor.csv`) or add a trade by hand, then refresh: the same transactions come back and the card says "restored from this browser".
+- [ ] Close the tab and open the site again: still restored.
+- [ ] "Clear my data" (header card): the sample is shown and nothing is saved (refresh shows the sample).
+- [ ] Ticking "Use the sample portfolio" on the Input tab also clears your saved transactions.
+- [ ] A private/incognito window starts with the sample and nothing carries over.
+- [ ] Saved data that no longer validates (e.g. edited in DevTools to an oversell) shows the sample with "Your saved transactions couldn’t be loaded…", and the bad data is removed.
 
 ## Current Portfolio (tab 1, landing page)
 
@@ -41,21 +50,41 @@ Tick each line. Anything marked **(deployed)** only makes sense on the hosted si
 
 ## Tab 4: Architecture
 
-- [ ] Diagram shows Cloudflare Pages + Render hosting, sample checkbox, price cache and snapshot boxes.
+- [ ] Diagram shows Cloudflare Pages + Render hosting, sample checkbox, price cache and snapshot boxes, the assistant boxes and the Anthropic zone; the Browser state box says "Saved in this browser only".
+- [ ] "The five parts" includes Assistant; the flow has step 6 "Ask (optional)"; "The prompt behind it" mentions the assistant.
 - [ ] Click to zoom: +/−, Fit, drag to pan, wheel/pinch zoom, double-click toggle, Esc closes and focus returns.
 - [ ] SVG and draw.io download links work.
+
+## Ask your portfolio (assistant)
+
+- [ ] The round "Ask" button shows bottom-right once a portfolio is loaded; it opens the panel with focus in the question box.
+- [ ] Desktop: chat on the left, Activity on the right. Phone (360–375 px): full-screen sheet with a Chat / Activity switch; no sideways scroll.
+- [ ] "What is my XIRR?": Activity shows Q, Question received, Context check: in scope, Tool call: get_xirr(), Result: …, Answer sent. The answer ends with "Tools used: get_xirr." and its number matches the Historical Performance tab.
+- [ ] "Which holding is largest?" uses get_holdings; values match the Current Portfolio tab.
+- [ ] "What if I sell 2 AAPL?" (sample) uses what_if; before/after values are shown; "sell 99 MSFT" is rejected ("only 3 held").
+- [ ] "Should I buy more NVDA?" → advice decline, Activity stops at "Declined: not about this portfolio", no tool calls.
+- [ ] "What is the capital of France?" and "How is TSLA doing?" (not held) → decline, no tool calls.
+- [ ] "how am I doing" → one clarifying question, no tool calls.
+- [ ] The answer never recommends buying or selling and never shows a number that isn't in a tool result.
+- [ ] A 501st character can't be typed (counter shows 0 left); the server also rejects > 500 characters with a readable error.
+- [ ] Esc or ✕ closes the panel and focus returns to "Ask"; Tab stays inside the panel while it is open.
+- [ ] Chat history survives closing and reopening the panel, is gone after a refresh, and resets when a different portfolio is loaded.
+- [ ] No API key on the backend → "The assistant is unavailable right now."; the rest of the app works.
+- [ ] Backend started with `$env:PRICE_SOURCE="snapshot"` → every assistant answer ends with "Note: Prices as of …, live feed unavailable. These are stored prices, not live ones."
+- [ ] **(deployed)** View source / DevTools → Network: the API key never appears in any response, and the browser never calls Anthropic directly (only the Render API).
 
 ## Price fallback and cold start
 
 - [ ] Start the backend with `$env:PRICE_SOURCE="snapshot"`: Tabs 2 and 3 show the amber "Stored prices, not live" banner with the date.
 - [ ] Stop the backend and reload: the "Waking the server…" bar appears with a counter, and skeletons show. Start the backend: data appears without a reload.
 - [ ] **(deployed)** After 15+ idle minutes, open the site: waking bar shows, data appears within about a minute.
+- [ ] Assistant cold start: with the backend stopped (local) or asleep (deployed), ask a question: the waking bar shows and the panel says "Waking the server…" before the first answer, which then arrives without a reload.
 
 ## Safety limits
 
 - [ ] `curl -X POST <api>/api/transactions/validate -H "Content-Type: application/json" --data-binary "@big.json"` with a >2 MB body returns 413 JSON.
 - [ ] 61 rapid requests from one IP within a minute: the 61st returns 429 with `Retry-After`.
-- [ ] Backend log shows only request lines (method, path, status): no request bodies, tickers or amounts.
+- [ ] Backend log shows only request lines (method, path, status): no request bodies, questions, tickers or amounts (check after a few assistant questions too).
 - [ ] **(deployed)** Calling the API from another origin (e.g. browser console on example.com) is blocked by CORS.
 
 ## Accessibility and layout
