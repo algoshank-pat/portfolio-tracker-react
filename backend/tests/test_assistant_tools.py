@@ -104,3 +104,21 @@ def test_what_if_saves_nothing(sample_tx, tools):
     tools["what_if"].invoke({"side": "BUY", "ticker": "AAPL", "quantity": 5})
     assert sample_tx.equals(before)
     assert tools["get_holdings"].invoke({})["current_value"] == "$12,260.00"
+
+
+def test_what_if_reports_trade_cash_and_changes_so_the_model_never_calculates(tools):
+    sell = tools["what_if"].invoke({"side": "SELL", "ticker": "AAPL", "quantity": 2})
+    assert sell["trade_proceeds"] == "$400.00" and "trade_cost" not in sell  # 2 x 200
+    c = sell["change"]
+    assert c["current_value"] == "-$400.00" and c["total_sold"] == "+$400.00"
+    assert c["total_return"] == "$0.00" and c["total_invested"] == "$0.00" and c["AAPL_quantity"] == "-2"
+
+    buy = tools["what_if"].invoke({"side": "BUY", "ticker": "MSFT", "quantity": 1, "price": 400, "fees": 1})
+    assert buy["trade_cost"] == "$401.00" and "trade_proceeds" not in buy  # 1 x 400 + 1 fee
+    assert buy["change"]["total_invested"] == "+$401.00" and buy["change"]["MSFT_quantity"] == "+1"
+    assert buy["change"]["total_return"] == "+$19.00"  # value +420 - invested +401
+
+
+def test_sell_proceeds_net_of_fees(tools):
+    r = tools["what_if"].invoke({"side": "SELL", "ticker": "VTI", "quantity": 10, "price": 350, "fees": 5})
+    assert r["trade_proceeds"] == "$3,495.00" and r["change"]["total_sold"] == "+$3,495.00"  # 10 x 350 - 5

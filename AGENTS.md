@@ -52,8 +52,8 @@ One step at a time; each starts only on Shashank's "go". Commits, pushes, env va
 | C8 | Pop-up assistant UI: chat + activity panel, streaming, waking bar, not-advice line | Done |
 | C9 | Docs kept true: README, Architecture tab, diagram, build prompt, QA checklist | Done |
 | C10 | Local verification: all tests, build, npm audit + OSV, local end-to-end | Done |
-| C11 | Shashank sets `ANTHROPIC_API_KEY` on Render (key from the `portfolio-tracker` Console workspace) | Not started |
-| C12 | Deploy: small commits, push, confirm both hosts rebuilt, live chat smoke test | Not started |
+| C11 | Shashank sets `ANTHROPIC_API_KEY` on Render (key from the `portfolio-tracker` Console workspace) | Done |
+| C12 | Deploy: small commits, push, confirm both hosts rebuilt, live chat smoke test | Done |
 | C13 | Live QA checklist run, honest report | Not started |
 
 ## Run / test commands

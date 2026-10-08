@@ -150,11 +150,19 @@ def build_tools(tx: pd.DataFrame, prices: PriceService) -> list[BaseTool]:
                 f"{r['trade']['ticker']}_weight": pct(b["ticker_weight"]),
             }
 
-        t = r["trade"]
+        t, c = r["trade"], r["change"]
         return {
             **_prices(r),
             "hypothetical_trade": f"{t['side']} {qty(t['quantity'])} {t['ticker']} at {money(t['price'])} "
             f"(fees {money(t['fees'])}) on {t['date']}",
+            ("trade_cost" if t["side"] == "BUY" else "trade_proceeds"): money(t["cash"]),
+            "change": {
+                "current_value": signed_money(c["current_value"]),
+                "total_invested": signed_money(c["total_invested"]),
+                "total_sold": signed_money(c["total_sold"]),
+                "total_return": signed_money(c["total_return"]),
+                f"{t['ticker']}_quantity": (f"+{qty(c['ticker_quantity'])}" if c["ticker_quantity"] > 0 else qty(c["ticker_quantity"])),
+            },
             "before": view(r["before"]),
             "after": view(r["after"]),
             "note": "Hypothetical only; nothing was saved.",

@@ -218,8 +218,15 @@ def what_if(
             "price": _num(price),
             "fees": _num(fees),
             "date": as_of.isoformat(),
+            # Same rule as total invested / total sold (SPEC.md section 3): a BUY costs qty x price + fees,
+            # a SELL brings in qty x price - fees.
+            "cash": _num(quantity * price + fees if side == "BUY" else quantity * price - fees),
         },
         "before": before,
+        "change": {
+            k: (None if before[k] is None or after[k] is None else _num(after[k] - before[k]))
+            for k in ("current_value", "total_invested", "total_sold", "total_return", "ticker_quantity")
+        },
         "after": after,
         "as_of": as_of.isoformat(),
         "price_source": data.source,

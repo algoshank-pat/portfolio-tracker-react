@@ -202,3 +202,10 @@ def test_tracing_stays_off_even_if_the_environment_turns_it_on(monkeypatch):
 
     assert all(os.environ[v] == "false" for v in ("LANGSMITH_TRACING", "LANGCHAIN_TRACING_V2", "LANGCHAIN_TRACING"))
     assert not tracing_is_enabled()
+
+
+def test_system_prompt_forbids_all_arithmetic():
+    from app.assistant.chat import SYSTEM
+
+    assert "no multiplying, adding, subtracting or percentages" in SYSTEM
+    assert "trade cost or proceeds, and changes" in SYSTEM

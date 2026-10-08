@@ -63,7 +63,7 @@ The assistant needs `ANTHROPIC_API_KEY` in the backend's environment (set it in 
 ## Checks
 
 ```powershell
-cd backend;  uv run pytest            # 118 tests, offline (prices and the LLM are faked)
+cd backend;  uv run pytest            # 121 tests, offline (prices and the LLM are faked)
 cd frontend; npm run build            # TypeScript check + production build
 ```
 
