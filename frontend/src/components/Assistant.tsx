@@ -164,6 +164,7 @@ export function Assistant() {
 
   if (!transactions.length) return null;
   const left = MAX_CHARS - draft.length;
+  const exampleTicker = transactions[0]?.ticker ?? "AAPL"; // a ticker this portfolio actually has
 
   return (
     <>
@@ -229,11 +230,8 @@ export function Assistant() {
               <div className={s.log} aria-live="polite" tabIndex={0}>
                 {!msgs.length && (
                   <div className={s.empty}>
-                    <p className={s.emptyTitle}>Questions about this portfolio only</p>
-                    <p>
-                      For example: what each holding is worth, your total return or XIRR, whether prices are live, or what
-                      a hypothetical buy or sell would change. Every number comes from the app’s own calculations.
-                    </p>
+                    <p className={s.emptyTitle}>Ask about this portfolio</p>
+                    <p>e.g. “What’s my XIRR?” or “What if I sell 2 {exampleTicker}?”</p>
                   </div>
                 )}
                 {msgs.map((m) => (
