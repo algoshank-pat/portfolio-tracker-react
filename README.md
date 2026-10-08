@@ -11,7 +11,7 @@ Plus an **"Ask your portfolio" assistant**: the round "Ask" button bottom-right 
 
 **Privacy:** your transactions are saved in this browser only (localStorage), never on our server. "Clear my data" removes them and shows the sample again. The backend is stateless: the browser sends its transactions with each request and the server stores nothing. Chat history lives in the open tab only. Use sample or made-up data.
 
-Built for the Maven "Mastering Agentic AI" (Gen Academy) Week 1 project. The course demo used Streamlit; an earlier Streamlit version of this tracker lives in the sibling folder `portfolio-tracker`. This version uses React + FastAPI.
+Built for the Maven "Mastering Agentic AI" (Gen Academy) Week 1 project. The course demo used Streamlit; this version uses React + FastAPI.
 
 ## Stack
 

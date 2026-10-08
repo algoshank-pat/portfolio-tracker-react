@@ -109,7 +109,7 @@ portfolio-tracker-react/
 
 ### Reused code
 
-Copied (not moved) from `C:\Maven\Projects\Week1\portfolio-tracker` into `backend/app/core/` and `backend/tests/`, adapting imports only:
+Copied from the earlier Streamlit version (retired 2026-10-08) into `backend/app/core/` and `backend/tests/`, adapting imports only:
 `transactions.py`, `accounting.py`, `xirr.py`, `history.py`, `prices.py`, and tests `test_transactions.py`, `test_accounting.py`, `test_xirr.py`, `test_history.py`, `test_prices.py`, `conftest.py` (26 tests).
 Not copied: `store.py`, `app.py`, `test_store.py`, `test_app.py`.
 `data/samples/sample_transactions.csv` (7 made-up trades: AAPL, MSFT, VTI) seeds the new sample.
@@ -191,7 +191,6 @@ Status: D1–D10 applied to `docs/architecture.svg` and `docs/architecture.drawi
 - The cold start (about a minute) could look like a broken app to a reviewer, so the wake-up screen is required.
 - Public repo and public sample: the sample CSV must be made-up.
 - Cloudflare has been steering new static sites towards Workers; confirm Pages setup against current docs in step 10.
-- Whether to also host the Streamlit version is undecided and not part of this build.
 
 ## 10. Maven handout changes
 

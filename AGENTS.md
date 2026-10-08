@@ -17,7 +17,7 @@ Product spec: [SPEC.md](SPEC.md). Owner: Shashank (GitHub: algoshank-pat).
 ## Project context
 
 - Week 1 project for Maven "Mastering Agentic AI" (Gen Academy). The deliverable is a public URL.
-- The earlier Streamlit version lives at `C:\Maven\Projects\Week1\portfolio-tracker`. **Do not modify it.** Reusable modules are copied from it (never moved); see SPEC.md, "Reused code".
+- The tested calculation code in `backend/app/core/` was copied from an earlier Streamlit version (see SPEC.md, "Reused code"). That version was retired on 2026-10-08; this repo is self-contained.
 - The original diagrams in `C:\Maven\Projects\Week1` (`portfolio-tracker-architecture.svg/.png/.drawio`) are not edited in place; edits go to the copies in `docs/` (step 8).
 
 ## Build steps
