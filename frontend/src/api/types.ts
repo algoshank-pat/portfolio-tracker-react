@@ -61,3 +61,25 @@ export interface PerformanceResponse {
   trend: TrendPoint[];
   missing_prices: string[];
 }
+
+// ---- "Ask your portfolio" assistant (SPEC.md A8) -----------------------------------
+export interface ChatTurn {
+  role: "user" | "assistant";
+  content: string;
+}
+
+export interface ChatRequest {
+  transactions: Transaction[];
+  message: string;
+  history: ChatTurn[];
+}
+
+export type ChatEvent =
+  | { type: "received"; chars: number }
+  | { type: "scope"; decision: "in_scope" | "out_of_scope" | "unclear"; reason: string; question_type: string }
+  | { type: "declined"; text: string; activity: string }
+  | { type: "clarify"; text: string }
+  | { type: "tool_call"; tool: string; args: Record<string, unknown>; turn: number }
+  | { type: "tool_result"; tool: string; summary: string }
+  | { type: "answer"; text: string; tools_used: string[]; price_source: string | null; turns: number }
+  | { type: "error"; text: string };

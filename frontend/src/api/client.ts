@@ -5,6 +5,8 @@
 // the gateway errors a sleeping host can return.
 
 import type {
+  ChatEvent,
+  ChatRequest,
   PerformanceResponse,
   PortfolioResponse,
   Transaction,
@@ -53,7 +55,8 @@ export const serverStatus = {
 // ---- core request ----------------------------------------------------------------
 const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
 
-async function request<T>(path: string, init?: RequestInit): Promise<T> {
+/** Fetch with the cold-start handling: retries while a sleeping server wakes. Returns any HTTP response. */
+async function send(path: string, init?: RequestInit): Promise<Response> {
   pending += 1;
   const slowTimer = setTimeout(() => {
     if (status !== "ready") setStatus("waking");
@@ -90,20 +93,49 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
         continue;
       }
       setStatus("ready");
-      const body = await res.json().catch(() => null);
-      if (!res.ok) {
-        const errors =
-          body && Array.isArray(body.errors) && body.errors.length
-            ? (body.errors as string[])
-            : [`The server returned an error (${res.status}).`];
-        throw new ApiError(res.status, errors);
-      }
-      return body as T;
+      return res;
     }
   } finally {
     clearTimeout(slowTimer);
     pending -= 1;
   }
+}
+
+async function errorFrom(res: Response): Promise<ApiError> {
+  const body = await res.json().catch(() => null);
+  const errors =
+    body && Array.isArray(body.errors) && body.errors.length
+      ? (body.errors as string[])
+      : [`The server returned an error (${res.status}).`];
+  return new ApiError(res.status, errors);
+}
+
+async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  const res = await send(path, init);
+  if (!res.ok) throw await errorFrom(res);
+  return (await res.json().catch(() => null)) as T;
+}
+
+/** POST /api/chat: calls onEvent for each activity event as it streams in (one JSON object per line). */
+async function chatStream(body: ChatRequest, onEvent: (e: ChatEvent) => void): Promise<void> {
+  const res = await send("/api/chat", { method: "POST", body: JSON.stringify(body) });
+  if (!res.ok) throw await errorFrom(res);
+  if (!res.body) throw new ApiError(0, ["The assistant’s reply could not be read."]);
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = "";
+  for (;;) {
+    const { value, done } = await reader.read();
+    buffer += decoder.decode(value ?? new Uint8Array(), { stream: !done });
+    let nl: number;
+    while ((nl = buffer.indexOf("\n")) >= 0) {
+      const line = buffer.slice(0, nl).trim();
+      buffer = buffer.slice(nl + 1);
+      if (line) onEvent(JSON.parse(line) as ChatEvent);
+    }
+    if (done) break;
+  }
+  if (buffer.trim()) onEvent(JSON.parse(buffer) as ChatEvent);
 }
 
 const post = <T>(path: string, body: unknown) =>
@@ -119,6 +151,7 @@ export const api = {
   portfolio: (transactions: Transaction[]) => post<PortfolioResponse>("/api/portfolio", { transactions }),
   performance: (transactions: Transaction[]) =>
     post<PerformanceResponse>("/api/performance", { transactions }),
+  chat: chatStream,
 };
 
 /** Fire-and-forget ping on page load so a sleeping backend starts waking immediately. */

@@ -209,7 +209,8 @@ export type IconName =
   | "linkedin"
   | "github"
   | "copy"
-  | "check";
+  | "check"
+  | "chat";
 
 const PATHS: Record<IconName, ReactNode> = {
   info: (
@@ -270,6 +271,12 @@ const PATHS: Record<IconName, ReactNode> = {
     </>
   ),
   check: <path d="m5 12 5 5 9-10" />,
+  chat: (
+    <>
+      <path d="M4 5h16v11H9l-5 4V5Z" />
+      <path d="M8 9.5h8M8 12.5h5" />
+    </>
+  ),
   // Brand marks are filled, not stroked.
   linkedin: (
     <path

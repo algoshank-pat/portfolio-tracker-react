@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { AppShell, type TabDef } from "./components/AppShell";
+import { Assistant } from "./components/Assistant";
 import { DataSource } from "./components/DataSource";
 import { ErrorBoundary } from "./components/ErrorBoundary";
 import { PortfolioProvider } from "./state/portfolio";
@@ -46,6 +47,7 @@ export function App() {
           {active === "architecture" && <ArchitectureTab />}
         </ErrorBoundary>
       </AppShell>
+      <Assistant />
     </PortfolioProvider>
   );
 }
