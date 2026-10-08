@@ -33,3 +33,13 @@ class Settings:
     price_ttl_s: int = field(default_factory=lambda: _int("PRICE_TTL_S", 900))
     bad_ticker_ttl_s: int = field(default_factory=lambda: _int("BAD_TICKER_TTL_S", 300))
     snapshot_path: Path = field(default_factory=lambda: DATA_DIR / "price_snapshot.json")
+
+    # "Ask your portfolio" assistant (SPEC.md section 11). The key is a secret: repr=False keeps it
+    # out of any printed or logged Settings object.
+    anthropic_api_key: str = field(default_factory=lambda: os.environ.get("ANTHROPIC_API_KEY", ""), repr=False)
+    llm_provider: str = field(default_factory=lambda: os.environ.get("LLM_PROVIDER", "anthropic").lower())
+    chat_model: str = field(default_factory=lambda: os.environ.get("CHAT_MODEL", "claude-haiku-5-5"))
+    chat_max_message_chars: int = field(default_factory=lambda: _int("CHAT_MAX_MESSAGE_CHARS", 500))
+    chat_max_tool_turns: int = field(default_factory=lambda: _int("CHAT_MAX_TOOL_TURNS", 4))
+    chat_max_history: int = field(default_factory=lambda: _int("CHAT_MAX_HISTORY", 10))
+    chat_timeout_s: int = field(default_factory=lambda: _int("CHAT_TIMEOUT_S", 30))

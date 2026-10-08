@@ -8,6 +8,8 @@ dependencies = [
     "uvicorn>=0.30",
     "pandas>=2.0",
     "yfinance>=0.2.50",
+    "langchain-core>=1.6.7,<2",
+    "langchain-anthropic>=1.7.5,<2",
 ]
 
 [dependency-groups]

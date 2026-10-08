@@ -142,3 +142,86 @@ def performance(tx: pd.DataFrame, prices: PriceService) -> dict[str, Any]:
         "trend": trend,
         "missing_prices": _missing(valued, data),
     }
+
+
+# ---- what-if (assistant tool, SPEC.md A6) ----------------------------------------
+def _snapshot(tx: pd.DataFrame, prices: PriceService, ticker: str) -> tuple[dict[str, Any], Any]:
+    """Totals plus one ticker's position, computed by the same engine as the dashboards."""
+    valued, data = _current(tx, prices)
+    current_value = float(valued["market_value"].sum(skipna=True)) if len(valued) else 0.0
+    s = accounting.summary(tx, current_value, as_of=data.as_of or date.today())
+    row = valued[valued["ticker"] == ticker]
+    pos = row.iloc[0] if len(row) else None
+    return {
+        "current_value": _num(current_value),
+        "total_invested": _num(s["total_invested"]),
+        "total_sold": _num(s["total_sold"]),
+        "total_return": _num(s["total_return"]),
+        "total_return_pct": _num(s["total_return_pct"]),
+        "xirr": _num(s["xirr"]),
+        "ticker_quantity": _num(pos["quantity"]) if pos is not None else 0.0,
+        "ticker_avg_cost": _num(pos["avg_cost"]) if pos is not None else None,
+        "ticker_weight": _num(pos["weight"]) if pos is not None else 0.0,
+    }, data
+
+
+def what_if(
+    tx: pd.DataFrame,
+    prices: PriceService,
+    side: str,
+    ticker: str,
+    quantity: float,
+    price: float | None = None,
+    fees: float = 0.0,
+) -> dict[str, Any]:
+    """One hypothetical BUY or SELL of a ticker already in the transactions, dated at the as-of date.
+
+    Re-validated by the same code as an upload (an oversell is rejected) and recomputed by the same
+    engine. Price defaults to that ticker's latest price. Nothing is saved.
+    """
+    ticker = str(ticker).strip().upper()
+    side = str(side).strip().upper()
+    if ticker not in set(tx["ticker"]):
+        raise ValidationError([f"{ticker} is not in this portfolio."])
+    problems = []
+    if side not in ("BUY", "SELL"):
+        problems.append("Side must be BUY or SELL.")
+    if not quantity or quantity <= 0:
+        problems.append("Quantity must be greater than 0.")
+    if price is not None and price < 0:
+        problems.append("Price must be 0 or more.")
+    if fees < 0:
+        problems.append("Fees must be 0 or more.")
+    if problems:
+        raise ValidationError(problems)
+    before, data = _snapshot(tx, prices, ticker)
+    if price is None:
+        price = data.latest.get(ticker)
+        if price is None:
+            raise ValidationError([f"No current price for {ticker}, so a price is needed."])
+    as_of = data.as_of or date.today()
+    trade = {
+        "trade_date": pd.Timestamp(as_of),
+        "ticker": ticker,
+        "side": side,
+        "quantity": quantity,
+        "price": price,
+        "fees": fees,
+    }
+    new_tx = normalize(pd.concat([tx[COLUMNS], pd.DataFrame([trade])], ignore_index=True))
+    after, _ = _snapshot(new_tx, prices, ticker)
+    return {
+        "trade": {
+            "side": side,
+            "ticker": ticker,
+            "quantity": _num(quantity),
+            "price": _num(price),
+            "fees": _num(fees),
+            "date": as_of.isoformat(),
+        },
+        "before": before,
+        "after": after,
+        "as_of": as_of.isoformat(),
+        "price_source": data.source,
+        "price_note": data.note,
+    }

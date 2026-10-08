@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import logging
+from typing import Callable
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -9,11 +10,12 @@ from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
 from starlette.exceptions import HTTPException as StarletteHTTPException
 
+from app.assistant.llm import build_chat_model
 from app.config import Settings
 from app.core.transactions import ValidationError
 from app.limits import BodySizeLimit, BodyTooLarge, RateLimit, RateLimiter
 from app.pricing.service import PriceService
-from app.routes import health, performance, portfolio, transactions
+from app.routes import chat, health, performance, portfolio, transactions
 
 log = logging.getLogger("portfolio_tracker")
 
@@ -23,11 +25,16 @@ def _readable(err: dict) -> str:
     return f"{where}: {err.get('msg', 'invalid value')}" if where else err.get("msg", "Invalid request.")
 
 
-def create_app(settings: Settings | None = None, prices: PriceService | None = None) -> FastAPI:
+def create_app(
+    settings: Settings | None = None,
+    prices: PriceService | None = None,
+    chat_model_factory: Callable | None = None,
+) -> FastAPI:
     settings = settings or Settings()
     app = FastAPI(title="Portfolio Tracker API", version="0.1.0", docs_url="/docs", redoc_url=None)
     app.state.settings = settings
     app.state.prices = prices or PriceService(settings)
+    app.state.chat_model_factory = chat_model_factory or build_chat_model
 
     @app.exception_handler(ValidationError)
     async def _validation(_req: Request, exc: ValidationError):
@@ -58,6 +65,7 @@ def create_app(settings: Settings | None = None, prices: PriceService | None = N
     app.include_router(transactions.router)
     app.include_router(portfolio.router)
     app.include_router(performance.router)
+    app.include_router(chat.router)
 
     # Added last = outermost, so even 413/429 responses carry CORS headers.
     app.add_middleware(BodySizeLimit, max_bytes=settings.max_body_bytes)
