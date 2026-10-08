@@ -54,7 +54,7 @@ One step at a time; each starts only on Shashank's "go". Commits, pushes, env va
 | C10 | Local verification: all tests, build, npm audit + OSV, local end-to-end | Done |
 | C11 | Shashank sets `ANTHROPIC_API_KEY` on Render (key from the `portfolio-tracker` Console workspace) | Done |
 | C12 | Deploy: small commits, push, confirm both hosts rebuilt, live chat smoke test | Done |
-| C13 | Live QA checklist run, honest report | Not started |
+| C13 | Live QA checklist run, honest report | Done 2026-10-08 (cold start, real file upload and phone checks left to Shashank) |
 
 ## Run / test commands
 

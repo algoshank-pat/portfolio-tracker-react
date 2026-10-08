@@ -8,7 +8,7 @@
   padding: var(--sp-6) var(--gutter) var(--sp-6);
   display: grid;
   gap: var(--sp-6);
-  align-items: end;
+  align-items: center; /* level with the card, whatever its height */
 }
 
 @media (min-width: 960px) {

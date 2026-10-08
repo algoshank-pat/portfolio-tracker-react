@@ -47,33 +47,35 @@ export function DataSource({ onGo }: { onGo: (tab: string) => void }) {
       </div>
 
       <div className={s.cta}>
-        <p className={s.ask}>{useSample ? "Want to see your own?" : "Try different data"}</p>
-        <div className={s.actions}>
-          <label htmlFor={id} className={s.upload} aria-disabled={loading}>
-            <Icon name="upload" className={s.icon} />
-            {useSample ? "Upload your CSV" : "Upload another CSV"}
-          </label>
-          <input
-            ref={fileRef}
-            id={id}
-            type="file"
-            accept=".csv,text/csv"
-            className="visually-hidden"
-            disabled={loading}
-            onChange={(e) => void pick(e.target.files)}
-          />
-          {useSample ? (
-            <Button variant="ghost" size="small" onClick={() => onGo("input")}>
-              or enter trades by hand
-            </Button>
-          ) : (
-            <Button variant="ghost" size="small" onClick={clearMyData} disabled={loading}>
-              Clear my data
-            </Button>
-          )}
+        <div className={s.ctaRow}>
+          <p className={s.ask}>{useSample ? "Want to see your own?" : "Try different data"}</p>
+          <div className={s.actions}>
+            <label htmlFor={id} className={s.upload} aria-disabled={loading}>
+              <Icon name="upload" className={s.icon} />
+              {useSample ? "Upload your CSV" : "Upload another CSV"}
+            </label>
+            <input
+              ref={fileRef}
+              id={id}
+              type="file"
+              accept=".csv,text/csv"
+              className="visually-hidden"
+              disabled={loading}
+              onChange={(e) => void pick(e.target.files)}
+            />
+            {useSample ? (
+              <Button variant="ghost" size="small" onClick={() => onGo("input")}>
+                or enter trades by hand
+              </Button>
+            ) : (
+              <Button variant="ghost" size="small" onClick={clearMyData} disabled={loading}>
+                Clear my data
+              </Button>
+            )}
+          </div>
         </div>
         <p className={s.fine}>
-          Columns: trade_date, ticker, side, quantity, price, fees.{" "}
+          CSV columns: trade_date, ticker, side, quantity, price, fees ·{" "}
           <a href={SAMPLE_URL} download="sample_transactions.csv">
             Download the template
           </a>
